@@ -34,11 +34,13 @@ class GridCell(buttons.Button):
 		data.grid[row][col] = not data.grid[row][col]
 
 
-
-def clearGrid(data):
-	for row in range(len(data.grid)):
-		for col in range(len(data.grid[0])):
-			data.grid[row][col] = False;
+class ClearButton(buttons.Button):
+	def pressed(data):
+		for row in range(len(data.grid)):
+			for col in range(len(data.grid[0])):
+				data.grid[row][col] = False;
+	def text():
+		return "Clear Grid"
 
 
 
@@ -66,6 +68,10 @@ def drawGrid(data):
 			rect = (col2X(col, data),row2Y(row, data),data.gridSize,data.gridSize)
 			pygame.draw.rect(data.screen,color, rect,0)
 
+def drawButtons(data):
+	pass
+
+
 ##################################
 ## INIT STUFF
 ##################################
@@ -78,15 +84,27 @@ def initGridButtons(data):
 			cell = GridCell(x,y,data.gridSize,data.gridSize)
 			data.buttonList.append(cell)
 
-def initButtons():
 
-	clearButton = buttons.Button(x,y,w,h)
 
 def defineGlobals(data):
+	data.screenWidth = 500
+	data.screenHeight = 500
+	data.margin = 5
+	data.buttonWidth = 60
+	data.buttonHeight = 30
 	data.grid = make2dList(10,10);
 	data.buttonList = []
-	data.gridCorner = (0,0);
+	data.gridCorner = (60,0);
 	data.gridSize = 40	
+
+def initButtons(data):
+	x = data.margin
+	y = data.screenHeight - data.margin
+	w = data.buttonWidth
+	h = data.buttonHeight
+	clearButton = ClearButton(x,y,w,h)
+	data.buttonList.append(clearButton)
+	initGridButtons(data)
 
 
 ##################################
@@ -94,9 +112,9 @@ def defineGlobals(data):
 ##################################
 def init(data):
 	defineGlobals(data)
-	initGridButtons(data)
+	initButtons(data)
 	pygame.init()
-	screen = pygame.display.set_mode((400,400))
+	screen = pygame.display.set_mode((data.screenWidth,data.screenHeight))
 	data.screen = screen
 
 
@@ -104,7 +122,8 @@ def init(data):
 			
 
 def redraw(data):
-	drawGrid(data);
+	drawGrid(data)
+	drawButtons(data)
 	pygame.display.update()
 	pass
 

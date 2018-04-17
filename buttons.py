@@ -16,6 +16,8 @@ class Button(object):
 	def inBounds(self, x, y):
 		return (self.x <= x and x <= self.x + self.width and
 		   	   self.y <= y and y <= self.y + self.height)
+	def text():
+		return "Button"
 
 	@abstractmethod
 	def pressed(self, data):
