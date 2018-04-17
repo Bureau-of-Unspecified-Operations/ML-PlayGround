@@ -1,9 +1,7 @@
 import pygame
 import sys
-import buttons
+import buttons, Colors
 
-BLACK = (0,0,0)
-WHITE = (255,2,255)
 
 
 def make2dList(rows, cols):
@@ -13,28 +11,23 @@ def make2dList(rows, cols):
 	return a
 
 
-grid = make2dList(10,10);
-buttonList = []
-gridCorner = (0,0);
-gridSize = 40
 
-def row2Y(row):
-	return gridCorner[1] + row * gridSize
-def col2X(col):
-	return gridCorner[0] + col * gridSize
-def x2Col(x):
-	return (x - gridCorner[0]) // gridSize
-def y2Row(y):
-	return (y - gridCorner[1]) // gridSize
+def row2Y(row, data):
+	return data.gridCorner[1] + row * data.gridSize
+def col2X(col, data):
+	return data.gridCorner[0] + col * data.gridSize
+def x2Col(x, data):
+	return (x - data.gridCorner[0]) // data.gridSize
+def y2Row(y, data):
+	return (y - data.gridCorner[1]) // data.gridSize
 
 
 class GridSquare(buttons.Button):
 
-	def pressed(self):
-		row = y2Row(self.y) 
-		col = x2Col(self.x)
-		print("row: %d, col: %d \n"%(row,col))
-		grid[row][col] = not grid[row][col]
+	def pressed(self, data):
+		row = y2Row(self.y, data) 
+		col = x2Col(self.x, data)
+		data.grid[row][col] = not data.grid[row][col]
 
 
 
@@ -42,12 +35,11 @@ class GridSquare(buttons.Button):
 ## EVENT HANDLING GOODNESS
 ##################################
 
-def buttonHandler(coord):
+def buttonHandler(data,coord):
 	x , y = (coord[0], coord[1])
-	#print("x coord: %d y coord: %d"%(x,y))
-	for button in buttonList:
+	for button in data.buttonList:
 		if button.inBounds(x,y):
-			button.pressed()
+			button.pressed(data)
 
 
 
@@ -57,31 +49,38 @@ def buttonHandler(coord):
 ##################################
 
 def drawGrid(data):
-	for row in range(len(grid)):
-		for col in range(len(grid[0])):
-			color = BLACK if (grid[row][col] == True) else WHITE
-			rect = (col2X(col),row2Y(row),gridSize,gridSize)
+	for row in range(len(data.grid)):
+		for col in range(len(data.grid[0])):
+			color = Colors.BLACK if (data.grid[row][col] == True) else Colors.WHITE
+			rect = (col2X(col, data),row2Y(row, data),data.gridSize,data.gridSize)
 			pygame.draw.rect(data.screen,color, rect,0)
 
 ##################################
 ## INIT STUFF
 ##################################
 
-def initGridButtons():
-	for row in range(len(grid)):
-		for col in range(len(grid[0])):
-			x = col2X(col)
-			y = row2Y(row)
+def initGridButtons(data):
+	for row in range(len(data.grid)):
+		for col in range(len(data.grid[0])):
+			x = col2X(col, data)
+			y = row2Y(row, data)
 			#print("button x: %d, y: %d \n"%(x,y))
-			button = GridSquare(x,y,gridSize,gridSize)
-			buttonList.append(button)
+			button = GridSquare(x,y,data.gridSize,data.gridSize)
+			data.buttonList.append(button)
+
+def defineGlobals(data):
+	data.grid = make2dList(10,10);
+	data.buttonList = []
+	data.gridCorner = (0,0);
+	data.gridSize = 40	
 
 
 ##################################
 ## MAIN LOOP FUNCTIONS
 ##################################
 def init(data):
-	initGridButtons()
+	defineGlobals(data)
+	initGridButtons(data)
 	pygame.init()
 	screen = pygame.display.set_mode((400,400))
 	data.screen = screen
@@ -102,7 +101,7 @@ def handleEvents(data):
 			pygame.quit()
 			sys.exit()
 		elif (event.type == pygame.MOUSEBUTTONDOWN):
-			buttonHandler(pygame.mouse.get_pos())
+			buttonHandler(data,pygame.mouse.get_pos())
 		
 
 
