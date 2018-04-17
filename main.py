@@ -11,7 +11,9 @@ def make2dList(rows, cols):
 	return a
 
 
-
+#################################
+## UTILITY STUFF
+#################################
 def row2Y(row, data):
 	return data.gridCorner[1] + row * data.gridSize
 def col2X(col, data):
@@ -22,12 +24,21 @@ def y2Row(y, data):
 	return (y - data.gridCorner[1]) // data.gridSize
 
 
-class GridSquare(buttons.Button):
+
+
+class GridCell(buttons.Button):
 
 	def pressed(self, data):
 		row = y2Row(self.y, data) 
 		col = x2Col(self.x, data)
 		data.grid[row][col] = not data.grid[row][col]
+
+
+
+def clearGrid(data):
+	for row in range(len(data.grid)):
+		for col in range(len(data.grid[0])):
+			data.grid[row][col] = False;
 
 
 
@@ -64,9 +75,12 @@ def initGridButtons(data):
 		for col in range(len(data.grid[0])):
 			x = col2X(col, data)
 			y = row2Y(row, data)
-			#print("button x: %d, y: %d \n"%(x,y))
-			button = GridSquare(x,y,data.gridSize,data.gridSize)
-			data.buttonList.append(button)
+			cell = GridCell(x,y,data.gridSize,data.gridSize)
+			data.buttonList.append(cell)
+
+def initButtons():
+
+	clearButton = buttons.Button(x,y,w,h)
 
 def defineGlobals(data):
 	data.grid = make2dList(10,10);

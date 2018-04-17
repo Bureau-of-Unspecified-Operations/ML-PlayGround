@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
 
+
 class Button(object):
+
 	__metaclass__ = ABCMeta
 
 	def __init__(self, x, y, w, h):
@@ -16,7 +18,7 @@ class Button(object):
 		   	   self.y <= y and y <= self.y + self.height)
 
 	@abstractmethod
-	def pressed(self):
+	def pressed(self, data):
 		pass
 
 
