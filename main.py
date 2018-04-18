@@ -64,6 +64,7 @@ def grid2Vector(grid):
 		for col in range(len(grid[0])):
 			x = 0 if grid[row][col] == False else 1
 			vector.append(x)
+	return vector
 
 def train(data, val):
 	vector = grid2Vector(data.grid)
@@ -71,7 +72,8 @@ def train(data, val):
 	knn.train(vector,label)
 
 def classify(data):
-	print("42...")
+	vector = grid2Vector(data.grid)
+	return knn.classify(vector)
 	
 
 #################################

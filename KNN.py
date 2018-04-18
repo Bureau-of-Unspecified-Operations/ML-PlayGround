@@ -6,27 +6,13 @@ class KNN(object):
 		self.labels = labels
 		self.k = k
 
-	def classify(self, example):
-		nearest = [self.k]
-		nearestIndexes = [self.k]
-
-		for i in range(len(self.data)):
-			point = self.data[i]
-			d = distance(example, point)
-			ind = closer(nearest,d)
-			if ind != -1:
-				nearest[ind] = d
-				nearestIndexes[ind] = i
-				
-		voters = [self.labels[i] for i in nearestIndexes]
-		ans = vote(voters)
-		return ans
+	
 
 	def train(self, data, label):
 		self.data.append(data)
 		self.labels.append(label)
 
-	def vote(voters):
+	def vote(self, voters):
 		best = None
 		mostVotes = 0
 		votes = {}
@@ -44,23 +30,36 @@ class KNN(object):
 		return best
 
 
-
-
 	# if d is smaller than a value in nearest, return index to replace
 	# else return -1
-	def closer(nearest, d):
+	def closer(self, nearest, d):
+		print("nearest ")
+		print(nearest)
 		for i in range(len(nearest)):
 			distance = nearest[i]
-			if(d < distance): return i
+			if(distance == -1 or d < distance): return i
 		return -1
 
 
+	def distance(self, p1, p2):
+		d = 0
+		for i in range(len(p1)):
+			d += (p1[i] - p2[i]) ** 2
+		return d
 
 
+	def classify(self, example):
+		nearest = [-1] * self.k
+		nearestIndexes = [-1] * self.k
 
-
-	def distance(p1, p2):
- 		d = 0
- 		for i in range(len(p1)):
- 			d += (p[i] - p2[i]) ** 2
- 		return d
+		for i in range(len(self.data)):
+			point = self.data[i]
+			d = self.distance(example, point)
+			ind = self.closer(nearest,d)
+			if ind != -1:
+				nearest[ind] = d
+				nearestIndexes[ind] = i
+				
+		voters = [self.labels[i] for i in nearestIndexes]
+		ans = self.vote(voters)
+		return ans
