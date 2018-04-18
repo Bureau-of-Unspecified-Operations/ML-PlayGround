@@ -10,6 +10,12 @@ def make2dList(rows, cols):
 		a.append([False] * cols);
 	return a
 
+# destructive
+def fill2dList(l,val):
+	for row in range(len(l)):
+		for col in range(len(l[0])):
+			l[row][col] = val
+
 
 #################################
 ## UTILITY STUFF
@@ -23,48 +29,42 @@ def x2Col(x, data):
 def y2Row(y, data):
 	return (y - data.gridCorner[1]) // data.gridSize
 
+#################################
+## COMMAND FLOW
+#################################
 
-
-
-class GridCell(buttons.Button):
-
-	def pressed(self, data):
-		row = y2Row(self.y, data) 
-		col = x2Col(self.x, data)
-		data.grid[row][col] = not data.grid[row][col]
-
-
-class ClearButton(buttons.Button):
-	def pressed(data):
-		for row in range(len(data.grid)):
-			for col in range(len(data.grid[0])):
-				data.grid[row][col] = False;
-	def text():
-		return "Clear Grid"
-"""
-class ActionButton(buttons.Button):
-	def pressed(data):
-		s = input(">> ")
-		if(s == "clear"):
-			clearCells(data)
-		elif(s == "train"):
-			label = input("What Number is this?\n")
-			addData(label,data)
-		elif(s == "predict"):
-			s = makePrediction(data)
-"""
-
+def commandMode(data):
+	
+	pass
 
 
 ##################################
 ## EVENT HANDLING GOODNESS
 ##################################
 
-def buttonHandler(data,coord):
+
+
+def toggleCell(data, row, col):
+	data.grid[row][col] = not data.grid[row][col]
+
+def inBounds(data, row, col, x, y):
+	x0 = col2X(col, data)
+	y0 = row2Y(row, data)
+	return (x0 <= x and x <= x0 + data.gridSize and
+			y0 <= y and y <= y0 + data.gridSize)
+
+def colorGrid(data, coord):
 	x , y = (coord[0], coord[1])
-	for button in data.buttonList:
-		if button.inBounds(x,y):
-			button.pressed(data)
+	for row in range(len(data.grid)):
+		for col in range(len(data.grid[0])):
+			if inBounds(data,row,col,x,y) and data.gridChanged[row][col] == False:
+				toggleCell(data,row,col)
+				data.gridChanged[row][col] = True
+
+def clearGridChanges(data):
+	for row in range(len(data.gridChanged)):
+		for col in range(len(data.gridChanged[0])):
+			data.gridChanged[row][col] = False
 
 
 
@@ -80,22 +80,13 @@ def drawGrid(data):
 			rect = (col2X(col, data),row2Y(row, data),data.gridSize,data.gridSize)
 			pygame.draw.rect(data.screen,color, rect,0)
 
-def drawButtons(data):
-	data
-	pass
+
 
 
 ##################################
 ## INIT STUFF
 ##################################
 
-def initGridButtons(data):
-	for row in range(len(data.grid)):
-		for col in range(len(data.grid[0])):
-			x = col2X(col, data)
-			y = row2Y(row, data)
-			cell = GridCell(x,y,data.gridSize,data.gridSize)
-			data.buttonList.append(cell)
 
 
 
@@ -106,18 +97,11 @@ def defineGlobals(data):
 	data.buttonWidth = 60
 	data.buttonHeight = 30
 	data.grid = make2dList(10,10);
+	data.gridChanged = make2dList(10,10)
 	data.buttonList = []
 	data.gridCorner = (60,60);
 	data.gridSize = 40	
-
-def initButtons(data):
-	x = data.margin
-	y = data.screenHeight - data.margin
-	w = data.buttonWidth
-	h = data.buttonHeight
-	clearButton = ClearButton(x,y,w,h)
-	data.buttonList.append(clearButton)
-	initGridButtons(data)
+	data.buttonDown = False
 
 
 ##################################
@@ -125,18 +109,13 @@ def initButtons(data):
 ##################################
 def init(data):
 	defineGlobals(data)
-	initButtons(data)
 	pygame.init()
 	screen = pygame.display.set_mode((data.screenWidth,data.screenHeight))
 	data.screen = screen
-
-
-
 			
 
 def redraw(data):
 	drawGrid(data)
-	drawButtons(data)
 	pygame.display.update()
 	pass
 
@@ -146,8 +125,20 @@ def handleEvents(data):
 		if(event.type == pygame.QUIT):
 			pygame.quit()
 			sys.exit()
+
 		elif (event.type == pygame.MOUSEBUTTONDOWN):
-			buttonHandler(data,pygame.mouse.get_pos())
+			data.buttonDown = True
+
+		elif event.type == pygame.MOUSEBUTTONUP:
+			data.buttonDown = False
+			clearGridChanges(data)
+
+		elif event.type == pygame.MOUSEMOTION:
+			if data.buttonDown == True:
+				colorGrid(data, pygame.mouse.get_pos())
+		elif event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_SPACE:
+				commandMode(data)
 		
 
 
