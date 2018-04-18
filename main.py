@@ -5,6 +5,9 @@ import KNN
 import pickle
 from pathlib import Path
 
+dataPath = "digitVectors.p"
+labelsPath = "digitLabels.p"
+
 
 def make2dList(rows, cols):
 	a = []
@@ -21,15 +24,23 @@ def fill2dList(l,val):
 
 
 
-dataFile = Path("digitVectors.p")
-labelFile = Path("digitLabels.p")
+dataFile = Path(dataPath)
+labelFile = Path(labelsPath)
 if dataFile.is_file():
-	data = pickle.load(open("digitVectors.p", "w+"))
-	labels = pickle.load(open("digitLabels.p", "w+"))
+	print("data exists")
+	data = pickle.load(open(dataPath, "rb"))
+	labels = pickle.load(open(labelsPath, "rb"))
+	print("data size: %d"%len(data))
 else:
 	data = []
 	labels = []
+
 knn = KNN.KNN(3, data, labels)
+
+def saveData():
+	print("data save size: %d"%len(knn.data))
+	pickle.dump(knn.data , open(dataPath, "wb"))
+	pickle.dump(knn.labels, open(labelsPath, "wb"))
 
 
 #################################
@@ -116,7 +127,7 @@ def clearGridChanges(data):
 		for col in range(len(data.gridChanged[0])):
 			data.gridChanged[row][col] = False
 
-def save
+
 
 
 ##################################

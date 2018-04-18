@@ -3,7 +3,7 @@ class KNN(object):
 	
 	def __init__(self,k,data, labels):
 		self.data = data
-		self.label = labels
+		self.labels = labels
 		self.k = k
 
 	def classify(self, example):
@@ -24,7 +24,7 @@ class KNN(object):
 
 	def train(self, data, label):
 		self.data.append(data)
-		self.label.append(label)
+		self.labels.append(label)
 
 	def vote(voters):
 		best = None
