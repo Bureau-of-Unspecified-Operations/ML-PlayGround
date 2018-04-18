@@ -1,7 +1,9 @@
 import pygame
 import sys
 import buttons, Colors
-
+import KNN
+import pickle
+from pathlib import Path
 
 
 def make2dList(rows, cols):
@@ -15,6 +17,19 @@ def fill2dList(l,val):
 	for row in range(len(l)):
 		for col in range(len(l[0])):
 			l[row][col] = val
+
+
+
+
+dataFile = Path("digitVectors.p")
+labelFile = Path("digitLabels.p")
+if dataFile.is_file():
+	data = pickle.load(open("digitVectors.p", "w+"))
+	labels = pickle.load(open("digitLabels.p", "w+"))
+else:
+	data = []
+	labels = []
+knn = KNN.KNN(3, data, labels)
 
 
 #################################
@@ -32,9 +47,17 @@ def y2Row(y, data):
 ################################
 ## ML STUFF
 ################################
+def grid2Vector(grid):
+	vector = []
+	for row in range(len(grid)):
+		for col in range(len(grid[0])):
+			x = 0 if grid[row][col] == False else 1
+			vector.append(x)
 
 def train(data, val):
-	print("training...")
+	vector = grid2Vector(data.grid)
+	label = int(val)
+	knn.train(vector,label)
 
 def classify(data):
 	print("42...")
@@ -93,7 +116,7 @@ def clearGridChanges(data):
 		for col in range(len(data.gridChanged[0])):
 			data.gridChanged[row][col] = False
 
-
+def save
 
 
 ##################################
@@ -150,6 +173,7 @@ def redraw(data):
 def handleEvents(data):
 	for event in pygame.event.get():
 		if(event.type == pygame.QUIT):
+			saveData()
 			pygame.quit()
 			sys.exit()
 

@@ -1,26 +1,50 @@
 
-class KNN(object)
+class KNN(object):
 	
-	def __init__(self,k):
-		self.data = trainingData
-		self.trainingInstances
-		self.trainingLabels
+	def __init__(self,k,data, labels):
+		self.data = data
+		self.label = labels
 		self.k = k
 
 	def classify(self, example):
-		nearestD = [self.k]
-		nearestI = [self.k]
+		nearest = [self.k]
+		nearestIndexes = [self.k]
 
 		for i in range(len(self.data)):
-			point = self.trainingData[i]
+			point = self.data[i]
 			d = distance(example, point)
-			if (ind = closer(nearest,d)) != -1:
+			ind = closer(nearest,d)
+			if ind != -1:
 				nearest[ind] = d
 				nearestIndexes[ind] = i
 				
-		voters = [self.trainingLabels[i] for i in nearestIndexes]
+		voters = [self.labels[i] for i in nearestIndexes]
 		ans = vote(voters)
 		return ans
+
+	def train(self, data, label):
+		self.data.append(data)
+		self.label.append(label)
+
+	def vote(voters):
+		best = None
+		mostVotes = 0
+		votes = {}
+		for vote in voters:
+			if vote in votes:
+				votes[vote] += 1
+				if(votes[vote] > mostVotes):
+					best = vote
+					mostVotes = votes[vote]
+			else:
+				votes[vote] = 1
+				if(votes[vote] > mostVotes):
+					best = vote
+					mostVotes = votes[vote]
+		return best
+
+
+
 
 	# if d is smaller than a value in nearest, return index to replace
 	# else return -1
@@ -36,10 +60,7 @@ class KNN(object)
 
 
 	def distance(p1, p2):
-		if(len(p1) != len(p2)):
-			 raise ValueError("mismatched vector size")
-	 	else:
-	 		d = 0
-	 		for i in range(len(p1)):
-	 			d += (p[i] - p2[i]) ** 2
-	 		return d
+ 		d = 0
+ 		for i in range(len(p1)):
+ 			d += (p[i] - p2[i]) ** 2
+ 		return d
