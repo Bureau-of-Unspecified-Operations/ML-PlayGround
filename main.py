@@ -29,12 +29,35 @@ def x2Col(x, data):
 def y2Row(y, data):
 	return (y - data.gridCorner[1]) // data.gridSize
 
+################################
+## ML STUFF
+################################
+
+def train(data, val):
+	print("training...")
+
+def classify(data):
+	print("42...")
+	
+
 #################################
 ## COMMAND FLOW
 #################################
 
 def commandMode(data):
-	
+	x = input(">> ")
+	if x == "clear":
+		clearGrid(data)
+	elif x == "train":
+		val = input("What digit is this?\n")
+		train(data,val)
+		clearGrid(data)
+	elif x == "pred":
+		p = classify(data)
+		print("Robot thinks it's %s"%p)
+		val = input("\nWas it right? input which digit it was\n")
+		train(data,val)
+		clearGrid(data)
 	pass
 
 
@@ -42,7 +65,11 @@ def commandMode(data):
 ## EVENT HANDLING GOODNESS
 ##################################
 
-
+def clearGrid(data):
+	for row in range(len(data.grid)):
+		for col in range(len(data.grid[0])):
+			data.grid[row][col] = False
+			data.gridChanged[row][col] = False
 
 def toggleCell(data, row, col):
 	data.grid[row][col] = not data.grid[row][col]
