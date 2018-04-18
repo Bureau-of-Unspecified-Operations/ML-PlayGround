@@ -1,0 +1,15 @@
+
+
+
+Things to add
+	KNN
+		- Make it easier to train.
+			- eliminate the "train" option, It will predict everytime
+			-Allowing for more exploratotry "hmmmm... how few digits can I get away with?"
+		- Have it show the Neighbors on a mini screen
+		- Allow you to choose K
+		- TECH:  change how pickle is setup to allow a consistant build up of data, unaffected by what you
+		choose at any given moment
+
+	NN
+		- Possible perceptron layer https://pdfs.semanticscholar.org/c0b7/a993ccc1374ef7147a6ebd168140060c45ea.pdf

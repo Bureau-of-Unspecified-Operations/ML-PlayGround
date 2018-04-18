@@ -4,6 +4,7 @@ import buttons, Colors
 import KNN
 import pickle
 from pathlib import Path
+import numpy
 
 dataPath = "digitVectors.p"
 labelsPath = "digitLabels.p"
