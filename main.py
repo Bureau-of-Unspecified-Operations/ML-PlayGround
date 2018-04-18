@@ -41,6 +41,18 @@ class ClearButton(buttons.Button):
 				data.grid[row][col] = False;
 	def text():
 		return "Clear Grid"
+"""
+class ActionButton(buttons.Button):
+	def pressed(data):
+		s = input(">> ")
+		if(s == "clear"):
+			clearCells(data)
+		elif(s == "train"):
+			label = input("What Number is this?\n")
+			addData(label,data)
+		elif(s == "predict"):
+			s = makePrediction(data)
+"""
 
 
 
@@ -69,6 +81,7 @@ def drawGrid(data):
 			pygame.draw.rect(data.screen,color, rect,0)
 
 def drawButtons(data):
+	data
 	pass
 
 
@@ -94,7 +107,7 @@ def defineGlobals(data):
 	data.buttonHeight = 30
 	data.grid = make2dList(10,10);
 	data.buttonList = []
-	data.gridCorner = (60,0);
+	data.gridCorner = (60,60);
 	data.gridSize = 40	
 
 def initButtons(data):
