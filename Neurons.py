@@ -1,9 +1,16 @@
 import math
+import numpy as np
 
 class Sigmoid(object):
 	def fire(self, net):
 		o = 1 / (1 + math.exp(-net))
 		return o
+
+	def derivative(self):
+		def myDerivative(x):
+			return np.multiply(x, 1 - x)
+		return myDerivative;
+		
 
 class Perceptron(object):
 	def fire(self, net):

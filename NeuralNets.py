@@ -1,45 +1,59 @@
 import numpy as np
+import Neurons
 
 
 
 
 
 class Layer(object):
-
-	def __init__(self, neuron, downLayer, upLayer, size, typein):
+	HIDDEN = 0
+	INPUT = 1
+	OUTPUT = 2
+	#giving weights should really wait till later
+	def __init__(self, neuron, downLayer, upLayer, nCount,wSize, typein):
 		self.neuron = neuron
 		self.upLayer = upLayer
 		self.downLayer = downLayer
-		self.weights = weights
-		self.type = type
-		self.cachedOutput = np.zeros(size)
-		self.cachedSigmas = np.zeros(size)
+		self.weights = [np.zeros(wSize)] * nCount
+		self.type = typein
+		self.cachedOutput = np.zeros(nCount)
+		self.cachedSigmas = np.zeros(nCount)
 
 	def compute(self):
 		out = list()
 		for w in self.weights:
 			net = np.dot(w, self.upLayer.cachedOutput)
+			print(w)
+			print(len(w))
+			print(len(self.upLayer.cachedOutput))
+			
+			print(net)
 			out.append(self.neuron.fire(net))
 		self.cachedOutput = np.array(out)
 		return self.cachedOutput
 
+
 class HiddenLayer(Layer):
+	def __init__(self, neuron, downLayer, upLayer, nCount, wSize):
+		super().__init__(neuron, downLayer, upLayer, nCount, wSize, Layer.HIDDEN)
 
 class OutputLayer(Layer):
-	def __init__(self, neuron, upLayer, size):
-		super().__init__(neuron, None, upLayer, size, Layer.OUTPUT)
+	def __init__(self, neuron, upLayer, nCount, wSize):
+		super().__init__(neuron, None, upLayer, nCount, wSize, Layer.OUTPUT)
 
 class InputLayer(Layer):
-	def __init__(self, downLayer, size):
-		super().__init__(self, None, downLayer, None, size, Layer.INPUT)
+	def __init__(self, downLayer, nCount, wSize):
+		super().__init__(None, downLayer, None, nCount, wSize, Layer.INPUT)
 
 
 class NeuralNet(object):
 
-	def __init__(self):
-		self.inputLayer
-		self.outputLayer
-		self.layers
+	def __init__(self,inSize,hSize,oSize):
+		self.inputLayer = InputLayer(None, inSize, inSize)
+		self.hiddenLayer = HiddenLayer(Neurons.Sigmoid(), None, None, hSize, hSize)  ### hacky shit TO REMOVE
+		self.outputLayer = OutputLayer(Neurons.Sigmoid(), None, oSize, hSize)
+		self.connect(self.inputLayer, self.hiddenLayer)
+		self.connect(self.hiddenLayer, self.outputLayer)
 
 
 	def compute(self, example):
@@ -49,6 +63,10 @@ class NeuralNet(object):
 			layer.compute()
 			layer = layer.downLayer
 		return layer.compute
+
+	def connect(self, upLayer, downLayer):
+		upLayer.downLayer = downLayer
+		downLayer.upLayer = upLayer
 
 
 
@@ -63,14 +81,15 @@ def backpropagateSGD(data, step, net):
 		return errorArray
 
 	(ex, label) = data
-	net.cachedCompute(ex);
+	net.compute(ex);
 	layer = net.outputLayer
 
 	while layer.type != Layer.INPUT:
-		localDerivative = layer.neuron.derivative(layer.cachedOutput)
+		derivative = np.vectorize(layer.neuron.derivative())
+		localDerivative = derivative(layer.cachedOutput)
 		error = np.zeros(len(localDerivative))  
 		if layer.type == Layer.OUTPUT:
-			error = np.subtract(label, layer.cachedOutput):
+			error = np.subtract(label, layer.cachedOutput)
 		elif layer.type == Layer.HIDDEN:
 			error = downStreamError(layer.downLayer.cachedSigmas, layer.downLayer.weights)
 		layer.cachedSigmas = -1 * np.multiply(error, localDerivative)
@@ -80,14 +99,17 @@ def backpropagateSGD(data, step, net):
 
 	## UPDATE WEIGHTS
 	layer = net.outputLayer
-	while layer.type != INPUT:
+	while layer.type != Layer.INPUT:
 		for w in layer.weights:
 			w = w + step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
 		layer = layer.upLayer
 
 
 
-backpropagateSGD()
+net = NeuralNet(2,2,2)
+print(net)
+data = (np.full(2,1), np.full(2,5))
+backpropagateSGD(data, 1, net)
 
 
 
