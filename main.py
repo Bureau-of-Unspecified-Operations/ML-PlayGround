@@ -1,7 +1,7 @@
 import pygame
 import sys
 import buttons, Colors
-import KNN
+import KNN, NeuralNets
 import pickle
 from pathlib import Path
 import numpy
@@ -35,6 +35,8 @@ if dataFile.is_file():
 else:
 	data = []
 	labels = []
+
+net = NeuralNets.Net(100,5,10)
 
 knn = KNN.KNN(3, data, labels)
 
@@ -205,6 +207,7 @@ def handleEvents(data):
 			if event.key == pygame.K_SPACE:
 				commandMode(data)
 		
+
 
 
 def main():

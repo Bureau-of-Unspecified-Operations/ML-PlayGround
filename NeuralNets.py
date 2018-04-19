@@ -23,11 +23,6 @@ class Layer(object):
 		out = list()
 		for w in self.weights:
 			net = np.dot(w, self.upLayer.cachedOutput)
-			print(w)
-			print(len(w))
-			print(len(self.upLayer.cachedOutput))
-			
-			print(net)
 			out.append(self.neuron.fire(net))
 		self.cachedOutput = np.array(out)
 		return self.cachedOutput
@@ -45,8 +40,14 @@ class InputLayer(Layer):
 	def __init__(self, downLayer, nCount, wSize):
 		super().__init__(None, downLayer, None, nCount, wSize, Layer.INPUT)
 
+class SoftMaxLayer(Layer):
+	def compute(self):
+		for w in self.weights:
+			net = np.dot(w, self.upLayer.cachedOutput)
+			out.append(self.neuron.fire)
 
-class NeuralNet(object):
+
+class Net(object):
 
 	def __init__(self,inSize,hSize,oSize):
 		self.inputLayer = InputLayer(None, inSize, inSize)
@@ -68,11 +69,25 @@ class NeuralNet(object):
 		upLayer.downLayer = downLayer
 		downLayer.upLayer = upLayer
 
+	def train(data, labels):
+		# assert len(data) == len(labels)
+		for i in range(len(data)):
+			backpropagateSGD(data[i],labels[i], self.step, self)
 
+
+
+def softMaxBackProp():
+
+	while layer.type != Layer.INPUT:
+		if layer.type == Layer.OUTPUT:
+			error = layer.cachedOutput[trueIndex]
+			derivate = layer.neuron.derivative(layer.cachedOutput, trueIndex)
+		elif layer.type == Layer.HIDDEN:
+			error = 
 
 
 # destructively modifies net to update weights.
-def backpropagateSGD(data, step, net):
+def backpropagateSGD(example, label step, net):
 	def downStreamError(sigmas,weights):
 		# assert len(sigmas) == len(wieghts)
 		errorArray = np.zeros(len(weights[0]))
@@ -80,8 +95,7 @@ def backpropagateSGD(data, step, net):
 			errorArray = np.add(errorArray, sigmas[i] * w)
 		return errorArray
 
-	(ex, label) = data
-	net.compute(ex);
+	net.compute(example);
 	layer = net.outputLayer
 
 	while layer.type != Layer.INPUT:
@@ -95,8 +109,6 @@ def backpropagateSGD(data, step, net):
 		layer.cachedSigmas = -1 * np.multiply(error, localDerivative)
 		layer = layer.upLayer
 
-
-
 	## UPDATE WEIGHTS
 	layer = net.outputLayer
 	while layer.type != Layer.INPUT:
@@ -106,7 +118,7 @@ def backpropagateSGD(data, step, net):
 
 
 
-net = NeuralNet(2,2,2)
+net = Net(2,2,2)
 print(net)
 data = (np.full(2,1), np.full(2,5))
 backpropagateSGD(data, 1, net)
