@@ -76,14 +76,41 @@ class Net(object):
 
 
 
-def softMaxBackProp():
+def softMaxBackProp(example, label, step, net):
 
+	def downStreamError(sigmas, weights):
+		## assert len(sigmas) == len(weights)
+		# COULD ELIMINATE FOR LOOP?
+		errorArr = np.zeros(len(weights))
+		for i, w in enumerate(weights):
+			# the weights for each node "stack" on top of each other
+			# multiplied by the sigma of that node
+			errorArr = np.add(errorArr, sigmas[i] * w)
+		return errorArr
+
+	# propogate example through net
+	net.compute(example)
+
+	#Caclulate the deltas
 	while layer.type != Layer.INPUT:
+		error = None
+		## Non-softmax layers won't need the lable, but they get it anyways
+		localDerivative = layer.neuron.derivative(layer.cachedOutput, label)
 		if layer.type == Layer.OUTPUT:
-			error = layer.cachedOutput[trueIndex]
-			derivate = layer.neuron.derivative(layer.cachedOutput, trueIndex)
+			error = net.lossFunction(layer, label);
 		elif layer.type == Layer.HIDDEN:
-			error = 
+			error = downStreamError(layer.downLayer.cachedSigmas,layer.downLayer.weights)
+
+		layer.cachedSigmas = np.multiply(error, localDerivative)
+		layer = layer.upLayer
+
+	# Update Weights
+	layer = net.outputLayer
+	while layer.type != Layer.INPUT:
+		for w in layer.weights:
+			w = w + (-1) * step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
+		layer = layer.upLayer
+
 
 
 # destructively modifies net to update weights.
