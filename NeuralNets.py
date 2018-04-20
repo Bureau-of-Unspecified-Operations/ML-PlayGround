@@ -43,22 +43,27 @@ class InputLayer(Layer):
 """
 
 class Net(object):
-
-	def __init__(self,inSize,hSize,oSize):
-		self.inputLayer = InputLayer(None, inSize, inSize)
-		self.hiddenLayer = HiddenLayer(Neurons.Sigmoid(), None, None, hSize, hSize)  ### hacky shit TO REMOVE
-		self.outputLayer = OutputLayer(Neurons.Sigmoid(), None, oSize, hSize)
-		self.connect(self.inputLayer, self.hiddenLayer)
-		self.connect(self.hiddenLayer, self.outputLayer)
+	# args should be a list of (neuron, nCount) pairs describing the hidden layers you want
+	def __init__(self, inputSize, outputSize, outputNeuron, lossDerivative, *args):
+		self.inputLayer = Layer(None, inputSize, Layer.INPUT)
+		self.outputLayer = Layer(outputNeuron, outputSize, Layer.OUTPUT)
+		self.lossDerivative = lossDerivative
+		hiddenLayer = None
+		upLayer = self.inputLayer
+		for i in range(len(args)):
+			hiddenLayer = Layer(args[i][0],args[i][1], Layer.HIDDEN)
+			self.connect(upLayer, hiddenLayer);
+		self.connect(hiddenLayer, self.outputLayer)
 
 
 	def compute(self, example):
 		self.inputLayer.cachedOutput = example
-		layer = self.inputLayer.downLayer
+		layer = self.inputLayer.downLayer # handles how input works
 		while(layer.type != Layer.OUTPUT):
 			layer.compute()
 			layer = layer.downLayer
-		return layer.compute
+		return layer.compute()
+
 
 	def connect(self, upLayer, downLayer):
 		upLayer.downLayer = downLayer
@@ -81,28 +86,29 @@ class Net(object):
 				errorArr = np.add(errorArr, sigmas[i] * w)
 			return errorArr
 
-	# propogate example through net
-	net.compute(example)
+		# propogate example through net
+		net.compute(example)
+		layer = net.outputLayer
 
-	#Caclulate the deltas
-	while layer.type != Layer.INPUT:
-		error = None
-		## Non-softmax layers won't need the lable, but they get it anyways
-		localDerivative = layer.neuron.derivative(layer.cachedOutput, label)
-		if layer.type == Layer.OUTPUT:
-			error = net.lossFunction(layer, label);
-		elif layer.type == Layer.HIDDEN:
-			error = downStreamError(layer.downLayer.cachedSigmas,layer.downLayer.weights)
+		# Caclulate the deltas
+		while layer.type != Layer.INPUT:
+			error = None
+			## Non-softmax layers won't need the lable, but they get it anyways
+			localDerivative = layer.neuron.derivative(layer.cachedOutput, label)
+			if layer.type == Layer.OUTPUT:
+				error = net.lossDerivative(layer, label);
+			elif layer.type == Layer.HIDDEN:
+				error = downStreamError(layer.downLayer.cachedSigmas,layer.downLayer.weights)
 
-		layer.cachedSigmas = np.multiply(error, localDerivative)
-		layer = layer.upLayer
+			layer.cachedSigmas = np.multiply(error, localDerivative)
+			layer = layer.upLayer
 
-	# Update Weights
-	layer = net.outputLayer
-	while layer.type != Layer.INPUT:
-		for w in layer.weights:
-			w = w + (-1) * step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
-		layer = layer.upLayer
+		# Update Weights
+		layer = net.outputLayer
+		while layer.type != Layer.INPUT:
+			for w in layer.weights:
+				w = w + (-1) * step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
+			layer = layer.upLayer
 
 
 
