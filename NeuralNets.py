@@ -3,49 +3,44 @@ import Neurons
 
 
 
-
-
 class Layer(object):
 	HIDDEN = 0
 	INPUT = 1
 	OUTPUT = 2
 	#giving weights should really wait till later
-	def __init__(self, neuron, downLayer, upLayer, nCount,wSize, typein):
+	def __init__(self, neuron, nCount, typein):
 		self.neuron = neuron
-		self.upLayer = upLayer
-		self.downLayer = downLayer
-		self.weights = [np.zeros(wSize)] * nCount
+		self.upLayer = None
+		self.downLayer = None
+		self.weights = None
 		self.type = typein
 		self.cachedOutput = np.zeros(nCount)
 		self.cachedSigmas = np.zeros(nCount)
+		self.nCount = nCount
 
 	def compute(self):
-		out = list()
+		nets = list()
 		for w in self.weights:
-			net = np.dot(w, self.upLayer.cachedOutput)
-			out.append(self.neuron.fire(net))
-		self.cachedOutput = np.array(out)
+			nets.append(np.dot(w, self.upLayer.cachedOutput))
+		self.cachedOutput = self.neuron.fire(np.array(nets))
 		return self.cachedOutput
 
+	def setWeights(n):
+		self.weights = [np.zeros(n)] * self.nCount  #make all array for effic
 
+"""
 class HiddenLayer(Layer):
-	def __init__(self, neuron, downLayer, upLayer, nCount, wSize):
-		super().__init__(neuron, downLayer, upLayer, nCount, wSize, Layer.HIDDEN)
+	def __init__(self, neuron, nCount):
+		super().__init__(neuron, nCount, Layer.HIDDEN)
 
 class OutputLayer(Layer):
-	def __init__(self, neuron, upLayer, nCount, wSize):
-		super().__init__(neuron, None, upLayer, nCount, wSize, Layer.OUTPUT)
+	def __init__(self, neuron, nCount):
+		super().__init__(neuron, nCount, Layer.OUTPUT)
 
 class InputLayer(Layer):
-	def __init__(self, downLayer, nCount, wSize):
-		super().__init__(None, downLayer, None, nCount, wSize, Layer.INPUT)
-
-class SoftMaxLayer(Layer):
-	def compute(self):
-		for w in self.weights:
-			net = np.dot(w, self.upLayer.cachedOutput)
-			out.append(self.neuron.fire)
-
+	def __init__(self, nCount):
+		super().__init__(None, nCount, Layer.INPUT)
+"""
 
 class Net(object):
 
@@ -68,25 +63,23 @@ class Net(object):
 	def connect(self, upLayer, downLayer):
 		upLayer.downLayer = downLayer
 		downLayer.upLayer = upLayer
+		downLayer.setWeights(upLayer.nCount)
 
 	def train(data, labels):
 		# assert len(data) == len(labels)
 		for i in range(len(data)):
 			backpropagateSGD(data[i],labels[i], self.step, self)
 
-
-
-def softMaxBackProp(example, label, step, net):
-
-	def downStreamError(sigmas, weights):
-		## assert len(sigmas) == len(weights)
-		# COULD ELIMINATE FOR LOOP?
-		errorArr = np.zeros(len(weights))
-		for i, w in enumerate(weights):
-			# the weights for each node "stack" on top of each other
-			# multiplied by the sigma of that node
-			errorArr = np.add(errorArr, sigmas[i] * w)
-		return errorArr
+	def backpropagateSGD(example, label, step, net):
+		def downStreamError(sigmas, weights):
+			## assert len(sigmas) == len(weights)
+			# COULD ELIMINATE FOR LOOP?
+			errorArr = np.zeros(len(weights))
+			for i, w in enumerate(weights):
+				# the weights for each node "stack" on top of each other
+				# multiplied by the sigma of that node
+				errorArr = np.add(errorArr, sigmas[i] * w)
+			return errorArr
 
 	# propogate example through net
 	net.compute(example)
@@ -113,6 +106,12 @@ def softMaxBackProp(example, label, step, net):
 
 
 
+
+
+
+
+
+"""
 # destructively modifies net to update weights.
 def backpropagateSGD(example, label step, net):
 	def downStreamError(sigmas,weights):
@@ -142,13 +141,10 @@ def backpropagateSGD(example, label step, net):
 		for w in layer.weights:
 			w = w + step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
 		layer = layer.upLayer
+"""
 
 
 
-net = Net(2,2,2)
-print(net)
-data = (np.full(2,1), np.full(2,5))
-backpropagateSGD(data, 1, net)
 
 
 
