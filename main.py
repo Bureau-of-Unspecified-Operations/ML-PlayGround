@@ -5,6 +5,7 @@ import KNN, NeuralNets, Neurons
 import pickle
 from pathlib import Path
 import numpy as np
+import knnError
 
 dataPath = "digitVectors.p"
 labelsPath = "digitLabels.p"
@@ -24,18 +25,7 @@ def fill2dList(l,val):
 			l[row][col] = val
 
 
-"""
-dataFile = Path(dataPath)
-labelFile = Path(labelsPath)
-if dataFile.is_file():
-	print("data exists")
-	datas = pickle.load(open(dataPath, "rb"))
-	labels = pickle.load(open(labelsPath, "rb"))
-	print("data size: %d"%len(datas))
-else:
-	datas = []
-	labels = []
-"""
+
 dataFile0 = Path(dataPath0)
 if dataFile0.is_file():
 	print("got that good kush")
@@ -47,21 +37,19 @@ else:
 #net = NeuralNets.Net(100,5,10)
 
 knn = KNN.KNN(3)
-net = NeuralNets.Net(100,10,Neurons.Softmax(),NeuralNets.Net.crossEntropy,(Neurons.Sigmoid(), 10))
+tester = knnError.KNNTester(knn)
+
+#net = NeuralNets.Net(100,10,Neurons.Softmax(),NeuralNets.Net.crossEntropy,(Neurons.Sigmoid(), 10))
 
 def newSaveData():
 	pickle.dump(dataset, open(dataPath0, "wb"))
 	print("did stuff")
 
-def saveData():
-	print("data save size: %d"%len(knn.data))
-	pickle.dump(knn.data , open(dataPath, "wb"))
-	pickle.dump(knn.labels, open(labelsPath, "wb"))
-
 
 #################################
 ## UTILITY STUFF
 #################################
+
 def row2Y(row, data):
 	return data.gridCorner[1] + row * data.gridSize
 def col2X(col, data):
@@ -70,6 +58,7 @@ def x2Col(x, data):
 	return (x - data.gridCorner[0]) // data.gridSize
 def y2Row(y, data):
 	return (y - data.gridCorner[1]) // data.gridSize
+
 
 ################################
 ## ML STUFF
@@ -134,6 +123,10 @@ def commandMode(data):
 		val = input("\nWas it right? input which digit it was\n")
 		train(data,val)
 		clearGrid(data)
+	elif x == "cross":
+		(err, matrix) = tester.crossValidate(15, dataset)
+		print("err = %d\n"%err)
+		print(matrix)
 	"""elif x == "ntrain":
 		netTrain()
 		clearGrid(data)
@@ -271,7 +264,6 @@ def handleEvents(data):
 	for event in pygame.event.get():
 		if(event.type == pygame.QUIT):
 			newSaveData()
-			#saveData()
 			pygame.quit()
 			sys.exit()
 

@@ -1,4 +1,6 @@
 import KNN
+from random import shuffle
+import numpy as np
 
 def make2dList(rows, cols, value):
 	a = []
@@ -6,30 +8,34 @@ def make2dList(rows, cols, value):
 		a.append([value] * cols);
 	return a
 
-def KNNTester(object):
+class KNNTester(object):
 
-	def __init__(self, examples, labels):
-		self.examples = examples
-		self.labels = labels
-		self.data = [(examples[i],labels[i]) for i in range(len(examples))]
+	def __init__(self, knn):
+		self.knn = knn
 
-	def crossValidate(foldSize, data):
+	def crossValidate(self, foldSize, data):
 		#randomize examples and labels
-		data.shuffle()
+		shuffle(data)
 		errSum = 0
 		k = len(data) // foldSize
+		averageMatrix = np.zeros((10,10))
 		for start in range(k):
-			test = examples[start:start + foldSize]
-			training = examples[0:start] + examples[start + foldSize:len(examples)]
-			error = self.matrix2Error(self.predMatrix(training, test), len(test))
+			test = data[start:start + foldSize]
+			training = data[0:start] + data[start + foldSize:len(data)]
+			matrix = self.predMatrix(training, test)
+			error = self.matrix2Error(matrix, len(test))
+			print("partial err= %d"%(error))
 			errSum += error
-		return errSum / k
+			averageMatrix = np.add(averageMatrix, matrix)
+
+		error = errSum / k
+		errorMatrix = averageMatrix / k
+		return (error, errorMatrix)
 
 
-	def predMatrix(trainingData, testData):
-		predMatrix = make2dList(10,10,0)
-		
-		for point in testExamples:
+	def predMatrix(self, trainingData, testData):
+		predMatrix = np.zeros((10,10))		
+		for point in testData:
 			(example, label) = point
 			(ans, metaData) = self.knn.classify(trainingData, example)
 			predMatrix[label][ans] += 1
