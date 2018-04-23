@@ -1,14 +1,8 @@
 
 class KNN(object):
 	
-	def __init__(self,k,data, labels):
-		self.data = data
-		self.labels = labels
+	def __init__(self,k):
 		self.k = k
-
-	def train(self, data, label):
-		self.data.append(data)
-		self.labels.append(label)
 
 	def vote(self, voters):
 		best = None
@@ -42,7 +36,6 @@ class KNN(object):
 		for i in range(len(p1)):
 			d += (p1[i] - p2[i]) ** 2
 		return d
-
 
 	def classify(self, trainingData, example):
 		nearest = [-1] * self.k

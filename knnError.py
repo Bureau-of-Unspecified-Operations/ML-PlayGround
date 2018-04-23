@@ -11,6 +11,7 @@ def KNNTester(object):
 	def __init__(self, examples, labels):
 		self.examples = examples
 		self.labels = labels
+		self.data = [(examples[i],labels[i]) for i in range(len(examples))]
 
 	def crossValidate(foldSize, data):
 		#randomize examples and labels
@@ -27,10 +28,11 @@ def KNNTester(object):
 
 	def predMatrix(trainingData, testData):
 		predMatrix = make2dList(10,10,0)
-		(testExamples, testLabels) = testData
-		for i, example in enumerate(testExamples):
+		
+		for point in testExamples:
+			(example, label) = point
 			(ans, metaData) = self.knn.classify(trainingData, example)
-			predMatrix[testLabels][ans] += 1
+			predMatrix[label][ans] += 1
 		return predMatrix
 
 

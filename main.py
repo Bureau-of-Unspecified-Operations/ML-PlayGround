@@ -8,6 +8,7 @@ import numpy as np
 
 dataPath = "digitVectors.p"
 labelsPath = "digitLabels.p"
+dataPath0 = "dataset.p"
 
 
 def make2dList(rows, cols):
@@ -23,8 +24,7 @@ def fill2dList(l,val):
 			l[row][col] = val
 
 
-
-
+"""
 dataFile = Path(dataPath)
 labelFile = Path(labelsPath)
 if dataFile.is_file():
@@ -35,11 +35,23 @@ if dataFile.is_file():
 else:
 	datas = []
 	labels = []
+"""
+dataFile0 = Path(dataPath0)
+if dataFile0.is_file():
+	print("got that good kush")
+	dataset = pickle.load(open(dataPath0, "rb"))
+
+else:
+	dataset = [(datas[i], labels[i]) for i in range(len(datas))]
 
 #net = NeuralNets.Net(100,5,10)
 
-knn = KNN.KNN(3, datas, labels)
+knn = KNN.KNN(3)
 net = NeuralNets.Net(100,10,Neurons.Softmax(),NeuralNets.Net.crossEntropy,(Neurons.Sigmoid(), 10))
+
+def newSaveData():
+	pickle.dump(dataset, open(dataPath0, "wb"))
+	print("did stuff")
 
 def saveData():
 	print("data save size: %d"%len(knn.data))
@@ -70,15 +82,24 @@ def grid2Vector(grid):
 			vector.append(x)
 	return vector
 
-def softMaxLabel(val):
-	arr = np.zeros(10);
-	arr[int(val)] = 1
-	return arr
 
 def train(data, val):
 	vector = grid2Vector(data.grid)
 	label = int(val)
-	knn.train(vector,label)
+	dataset.append((vector,label))
+
+
+def classify(data):
+	vector = grid2Vector(data.grid)
+	(pred, usedData) = knn.classify(dataset, vector)
+	changeGuesses(data, usedData)
+	data.drawNeighbors = True
+	return pred
+"""
+def softMaxLabel(val):
+	arr = np.zeros(10);
+	arr[int(val)] = 1
+	return arr
 
 def netTrain():
 	vectors = np.array(datas)
@@ -88,17 +109,10 @@ def netTrain():
 	net.train(vectors,f_labels)
 	print("done!")
 
-def classify(data):
-	vector = grid2Vector(data.grid)
-	(pred, usedData) = knn.classify(vector)
-	changeGuesses(data, usedData)
-	data.drawNeighbors = True
-	return pred
-
 def netClassify(data):
 	vector = grid2Vector(data.grid)
 	return net.adapterCompute(vector)
-
+"""
 
 	
 
@@ -120,14 +134,14 @@ def commandMode(data):
 		val = input("\nWas it right? input which digit it was\n")
 		train(data,val)
 		clearGrid(data)
-	elif x == "ntrain":
+	"""elif x == "ntrain":
 		netTrain()
 		clearGrid(data)
 	elif x == "npred":
 		p = netClassify(data)
 		print("Robot thinks it's %s"%p)
 		val = input("\nWas it right? input which digit it was\n")
-		clearGrid(data)
+		clearGrid(data)"""
 	pass
 
 
@@ -175,6 +189,7 @@ def changeGuesses(data, usedData):
 ##################################
 ## DRAWING N 'AT
 ##################################
+
 
 def drawGrid(data):
 	for row in range(len(data.grid)):
@@ -255,7 +270,8 @@ def redraw(data):
 def handleEvents(data):
 	for event in pygame.event.get():
 		if(event.type == pygame.QUIT):
-			saveData()
+			newSaveData()
+			#saveData()
 			pygame.quit()
 			sys.exit()
 
