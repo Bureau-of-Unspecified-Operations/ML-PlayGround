@@ -33,8 +33,6 @@ class KNN(object):
 	# if d is smaller than a value in nearest, return index to replace
 	# else return -1
 	def closer(self, nearest, d):
-		print("nearest ")
-		print(nearest)
 		for i in range(len(nearest)):
 			distance = nearest[i]
 			if(distance == -1 or d < distance): return i
@@ -51,7 +49,8 @@ class KNN(object):
 	def classify(self, example):
 		nearest = [-1] * self.k
 		nearestIndexes = [-1] * self.k
-
+		print(type(self.data[0]))
+		print(type(self.labels[0]))
 		for i in range(len(self.data)):
 			point = self.data[i]
 			d = self.distance(example, point)

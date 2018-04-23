@@ -25,7 +25,7 @@ class Layer(object):
 		self.cachedOutput = self.neuron.fire(np.array(nets))
 		return self.cachedOutput
 
-	def setWeights(n):
+	def setWeights(self, n):
 		self.weights = [np.zeros(n)] * self.nCount  #make all array for effic
 
 """
@@ -70,7 +70,7 @@ class Net(object):
 		downLayer.upLayer = upLayer
 		downLayer.setWeights(upLayer.nCount)
 
-	def train(data, labels):
+	def train(self, data, labels):
 		# assert len(data) == len(labels)
 		for i in range(len(data)):
 			backpropagateSGD(data[i],labels[i], self.step, self)
@@ -109,6 +109,26 @@ class Net(object):
 			for w in layer.weights:
 				w = w + (-1) * step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
 			layer = layer.upLayer
+
+
+	def crossEntropy(layer,label):
+		index = -1
+		for i in range(len(label)):
+			if label[i] == 1: index = i 
+		assert(index != -1)
+		return -1 / layer[index]
+
+	def adapterCompute(self, example):
+		results = self.compute(example)
+		return np.argmax(results)
+
+	def train(self, data, labels):
+		step = .3
+		maxIter = 1
+		for t in range(maxIter):
+			for i, example in enumerate(data):
+				self.backpropagateSGD(example, labels[i], step, self)
+
 
 
 

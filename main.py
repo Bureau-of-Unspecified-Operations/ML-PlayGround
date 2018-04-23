@@ -1,7 +1,7 @@
 import pygame
 import sys
 import buttons, Colors
-import KNN, NeuralNets
+import KNN, NeuralNets, Neurons
 import pickle
 from pathlib import Path
 import numpy
@@ -29,16 +29,17 @@ dataFile = Path(dataPath)
 labelFile = Path(labelsPath)
 if dataFile.is_file():
 	print("data exists")
-	data = pickle.load(open(dataPath, "rb"))
+	datas = pickle.load(open(dataPath, "rb"))
 	labels = pickle.load(open(labelsPath, "rb"))
-	print("data size: %d"%len(data))
+	print("data size: %d"%len(datas))
 else:
-	data = []
+	datas = []
 	labels = []
 
-net = NeuralNets.Net(100,5,10)
+#net = NeuralNets.Net(100,5,10)
 
-knn = KNN.KNN(3, data, labels)
+knn = KNN.KNN(3, datas, labels)
+net = NeuralNets.Net(100,10,Neurons.Softmax(),NeuralNets.Net.crossEntropy,(Neurons.Sigmoid(), 10))
 
 def saveData():
 	print("data save size: %d"%len(knn.data))
@@ -69,14 +70,36 @@ def grid2Vector(grid):
 			vector.append(x)
 	return vector
 
+def softMaxLabel(val):
+	arr = np.zeros(10);
+	arr[int(val)] = 1
+	return arr
+
 def train(data, val):
 	vector = grid2Vector(data.grid)
 	label = int(val)
 	knn.train(vector,label)
 
+def netTrain():
+	vectors = np.array(data)
+	func = np.vectorize(softMaxLabel)
+	f_labels = func(labels);
+	f_labels = np.array(f_labels)
+	print(type(f_labels))
+	print(type(vectors))
+	print(type(f_labels[0]))
+	print(type(f_labels[0]))
+
+
 def classify(data):
 	vector = grid2Vector(data.grid)
 	return knn.classify(vector)
+
+def netClassify(data):
+	vector = grid2Vector(data.grid)
+	return net.adapterCompute(vector)
+
+
 	
 
 #################################
@@ -96,6 +119,9 @@ def commandMode(data):
 		print("Robot thinks it's %s"%p)
 		val = input("\nWas it right? input which digit it was\n")
 		train(data,val)
+		clearGrid(data)
+	elif x == "ntrain":
+		netTrain()
 		clearGrid(data)
 	pass
 
