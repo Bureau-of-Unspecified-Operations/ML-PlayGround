@@ -2,14 +2,15 @@ import math
 import numpy as np
 
 class Sigmoid(object):
-	def fire(self, net):
-		o = 1 / (1 + math.exp(-net))
-		return o
+	def fire(self, netArr):
+		def func(x):
+			return 1 / (1 + math.exp(-x))
+		vectorized = np.vectorize(func)
+		return vectorized(netArr)
 
-	def derivative(self):
-		def myDerivative(x):
-			return np.multiply(x, 1 - x)
-		return myDerivative;
+	def derivative(self, netArr, label):
+		return np.multiply(netArr, 1 - netArr)
+		
 
 class Softmax(object):
 	def fire(self, netArr):
@@ -20,12 +21,15 @@ class Softmax(object):
 		norm = np.sum(netArr)
 		netArr = netArr / norm
 		return netArr
-	def derivative(self, softOut, trueIndex):
+	def derivative(self, softOut, label):
+		index = -1
+		for i in range(len(label)):
+			if label[i] == 1: index = i
+		assert(index != -1)
 		arr = np.zeros(len(softOut))
 		for i in range(len(arr)):
-			arr[i] = 1 - softOut[i] if i == trueIndex else -softOut[i]
-		return softOut[trueIndex] * arr
-		
+			arr[i] = 1 - softOut[i] if i == index else -softOut[i]
+		return softOut[index] * arr		
 
 class Perceptron(object):
 	def fire(self, net):

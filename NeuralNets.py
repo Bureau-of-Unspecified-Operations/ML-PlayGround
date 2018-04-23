@@ -75,7 +75,7 @@ class Net(object):
 		for i in range(len(data)):
 			backpropagateSGD(data[i],labels[i], self.step, self)
 
-	def backpropagateSGD(example, label, step, net):
+	def backpropagateSGD(self, example, label, step):
 		def downStreamError(sigmas, weights):
 			## assert len(sigmas) == len(weights)
 			# COULD ELIMINATE FOR LOOP?
@@ -86,9 +86,9 @@ class Net(object):
 				errorArr = np.add(errorArr, sigmas[i] * w)
 			return errorArr
 
-		# propogate example through net
-		net.compute(example)
-		layer = net.outputLayer
+		# propagate example through net
+		self.compute(example)
+		layer = self.outputLayer
 
 		# Caclulate the deltas
 		while layer.type != Layer.INPUT:
@@ -96,7 +96,7 @@ class Net(object):
 			## Non-softmax layers won't need the lable, but they get it anyways
 			localDerivative = layer.neuron.derivative(layer.cachedOutput, label)
 			if layer.type == Layer.OUTPUT:
-				error = net.lossDerivative(layer, label);
+				error = self.lossDerivative(layer.cachedOutput, label);
 			elif layer.type == Layer.HIDDEN:
 				error = downStreamError(layer.downLayer.cachedSigmas,layer.downLayer.weights)
 
@@ -104,10 +104,10 @@ class Net(object):
 			layer = layer.upLayer
 
 		# Update Weights
-		layer = net.outputLayer
+		layer = self.outputLayer
 		while layer.type != Layer.INPUT:
-			for w in layer.weights:
-				w = w + (-1) * step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
+			for i, w in enumerate(layer.weights):
+				w = w + (-1) * step * layer.upLayer.cachedOutput * layer.cachedSigmas[i]
 			layer = layer.upLayer
 
 
@@ -127,7 +127,7 @@ class Net(object):
 		maxIter = 1
 		for t in range(maxIter):
 			for i, example in enumerate(data):
-				self.backpropagateSGD(example, labels[i], step, self)
+				self.backpropagateSGD(example, labels[i], step)
 
 
 

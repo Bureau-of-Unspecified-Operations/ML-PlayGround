@@ -4,7 +4,7 @@ import buttons, Colors
 import KNN, NeuralNets, Neurons
 import pickle
 from pathlib import Path
-import numpy
+import numpy as np
 
 dataPath = "digitVectors.p"
 labelsPath = "digitLabels.p"
@@ -81,15 +81,12 @@ def train(data, val):
 	knn.train(vector,label)
 
 def netTrain():
-	vectors = np.array(data)
-	func = np.vectorize(softMaxLabel)
-	f_labels = func(labels);
-	f_labels = np.array(f_labels)
-	print(type(f_labels))
-	print(type(vectors))
-	print(type(f_labels[0]))
-	print(type(f_labels[0]))
-
+	vectors = np.array(datas)
+	f_labels = np.zeros((len(datas),10))
+	for i in range(len(f_labels)):
+		f_labels[i] = softMaxLabel(labels[i])
+	net.train(vectors,f_labels)
+	print("done!")
 
 def classify(data):
 	vector = grid2Vector(data.grid)
@@ -122,6 +119,11 @@ def commandMode(data):
 		clearGrid(data)
 	elif x == "ntrain":
 		netTrain()
+		clearGrid(data)
+	elif x == "npred":
+		p = netClassify(data)
+		print("Robot thinks it's %s"%p)
+		val = input("\nWas it right? input which digit it was\n")
 		clearGrid(data)
 	pass
 

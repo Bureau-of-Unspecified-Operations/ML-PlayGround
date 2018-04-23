@@ -61,4 +61,7 @@ class KNN(object):
 				
 		voters = [self.labels[i] for i in nearestIndexes]
 		ans = self.vote(voters)
-		return ans
+		usedExamples
+		for i in range(len(nearestIndexes)):
+			usedExamples.append(self.data[nearestIndexes[i]], self.labels[nearestIndexes[i]])
+		return ans, usedExamples 
