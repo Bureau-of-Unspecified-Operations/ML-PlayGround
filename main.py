@@ -90,7 +90,10 @@ def netTrain():
 
 def classify(data):
 	vector = grid2Vector(data.grid)
-	return knn.classify(vector)
+	(pred, usedData) = knn.classify(vector)
+	changeGuesses(data, usedData)
+	data.drawNeighbors = True
+	return pred
 
 def netClassify(data):
 	vector = grid2Vector(data.grid)
@@ -160,6 +163,12 @@ def clearGridChanges(data):
 		for col in range(len(data.gridChanged[0])):
 			data.gridChanged[row][col] = False
 
+def changeGuesses(data, usedData):
+	(examples, labels) = usedData
+	for i in range(data.k):
+		data.usedExamples[i] = examples[i]
+		data.usedLabels[i] = labels[i]
+
 
 
 
@@ -174,6 +183,27 @@ def drawGrid(data):
 			rect = (col2X(col, data),row2Y(row, data),data.gridSize,data.gridSize)
 			pygame.draw.rect(data.screen,color, rect,0)
 
+def drawGridFromArray(data, array, x, y, cellSize):
+	for i in range(len(array)):
+		row = i // 10
+		col = i % 10
+		x0 = x + col * cellSize
+		y0 = y + row * cellSize
+		rect = (x0,y0,cellSize,cellSize)
+		color = Colors.BLACK if (array[i] == True) else Colors.WHITE
+		pygame.draw.rect(data.screen,color, rect,0)
+
+def drawHelpers(data):
+	x0 = 500 
+	y0 = 10
+	cellSize = 10
+	for i in range(len(data.usedExamples)):
+		x = x0 + i * cellSize * 10 + data.margin
+		y = y0
+	
+		drawGridFromArray(data, data.usedExamples[i],x,y,cellSize)
+
+
 
 
 
@@ -185,17 +215,24 @@ def drawGrid(data):
 
 
 def defineGlobals(data):
-	data.screenWidth = 500
-	data.screenHeight = 500
+	data.screenWidth = 1000
+	data.screenHeight = 1000
+	data.usedExamples = None
+	data.usedLabels = None
 	data.margin = 5
 	data.buttonWidth = 60
 	data.buttonHeight = 30
 	data.grid = make2dList(10,10);
 	data.gridChanged = make2dList(10,10)
+	data.drawNeighbors = False
 	data.buttonList = []
 	data.gridCorner = (60,60);
 	data.gridSize = 40	
+	data.k = 3
 	data.buttonDown = False
+	data.usedExamples = [0] * data.k
+	data.usedLabels = [0] * data.k
+	
 
 
 ##################################
@@ -210,6 +247,7 @@ def init(data):
 
 def redraw(data):
 	drawGrid(data)
+	if data.drawNeighbors == True: drawHelpers(data)
 	pygame.display.update()
 	pass
 
