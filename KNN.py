@@ -6,8 +6,6 @@ class KNN(object):
 		self.labels = labels
 		self.k = k
 
-	
-
 	def train(self, data, label):
 		self.data.append(data)
 		self.labels.append(label)
@@ -46,24 +44,22 @@ class KNN(object):
 		return d
 
 
-	def classify(self, example):
+	def classify(self, trainingData, example):
 		nearest = [-1] * self.k
 		nearestIndexes = [-1] * self.k
-		print(type(self.data[0]))
-		print(type(self.labels[0]))
-		for i in range(len(self.data)):
-			point = self.data[i]
+		for i in range(len(trainingData)):
+			point = trainingData[i][0]
 			d = self.distance(example, point)
 			ind = self.closer(nearest,d)
 			if ind != -1:
 				nearest[ind] = d
 				nearestIndexes[ind] = i
 				
-		voters = [self.labels[i] for i in nearestIndexes]
+		voters = [trainingData[i][1] for i in nearestIndexes]
 		ans = self.vote(voters)
 		usedExamples = list()
 		usedLabels = list()
 		for i in range(len(nearestIndexes)):
-			usedExamples.append(self.data[nearestIndexes[i]])
-			usedLabels.append(self.labels[nearestIndexes[i]])
+			usedExamples.append(trainingData[nearestIndexes[i]][0])
+			usedLabels.append(trainingData[nearestIndexes[i]][1])
 		return ans, (usedExamples, usedLabels)
