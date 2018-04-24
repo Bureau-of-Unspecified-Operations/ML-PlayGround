@@ -23,7 +23,8 @@ class KNNTester(object):
 			test = data[start:start + foldSize]
 			training = data[0:start] + data[start + foldSize:len(data)]
 			matrix = self.predMatrix(training, test)
-			error = self.matrix2Error(matrix, len(test))
+			#print(matrix)
+			error = self.matrix2Error(matrix, foldSize)
 			print("partial err= %d"%(error))
 			errSum += error
 			averageMatrix = np.add(averageMatrix, matrix)
@@ -46,4 +47,7 @@ class KNNTester(object):
 		correct = 0
 		for i in range(len(matrix)):
 			correct += matrix[i][i]
+		print(correct)
+		print(total)
+		print(correct / total)
 		return correct / total

@@ -6,11 +6,14 @@ import pickle
 from pathlib import Path
 import numpy as np
 import knnError
+from jygame import util
 
 dataPath = "digitVectors.p"
 labelsPath = "digitLabels.p"
 dataPath0 = "dataset.p"
 
+
+class Frame(object): pass
 
 def make2dList(rows, cols):
 	a = []
@@ -80,9 +83,9 @@ def train(data, val):
 
 def classify(data):
 	vector = grid2Vector(data.grid)
-	(pred, usedData) = knn.classify(dataset, vector)
-	changeGuesses(data, usedData)
-	data.drawNeighbors = True
+	(pred, metaData) = knn.classify(dataset, vector)
+	#changeGuesses(data, usedData)
+	#data.drawNeighbors = True
 	return pred
 """
 def softMaxLabel(val):
@@ -125,8 +128,10 @@ def commandMode(data):
 		clearGrid(data)
 	elif x == "cross":
 		(err, matrix) = tester.crossValidate(15, dataset)
-		print("err = %d\n"%err)
-		print(matrix)
+		data.showError = True
+		data.matrix = matrix
+		#print("err = %d\n"%err)
+		#print(matrix)
 	"""elif x == "ntrain":
 		netTrain()
 		clearGrid(data)
@@ -213,6 +218,23 @@ def drawHelpers(data):
 
 
 
+def drawGridWithText(data, grid, labels):
+	frame = Frame()
+	frame.screen = data.screen
+	frame.x = 500
+	frame.y = 50
+	frame.scale = 40
+	for row in range(len(grid)):
+		for col in range(len(grid[0])):
+			x0 = util.col2X(col, frame) #inconsistant with where the x0 is offset (using frame, and inside drawrect)
+			y0 = util.row2Y(row, frame)
+			text = str(round(grid[row][col], 2))
+			util.drawTextRect(frame, (x0, y0, frame.scale, frame.scale), data.font, text, Colors.SILVER, Colors.BLACK)
+
+def drawCrossVal(data):
+	drawGridWithText(data, data.matrix, range(10))
+
+
 
 
 ##################################
@@ -227,12 +249,13 @@ def defineGlobals(data):
 	data.screenHeight = 1000
 	data.usedExamples = None
 	data.usedLabels = None
-	data.margin = 5
+	data.margin = 10
 	data.buttonWidth = 60
 	data.buttonHeight = 30
 	data.grid = make2dList(10,10);
 	data.gridChanged = make2dList(10,10)
 	data.drawNeighbors = False
+	data.showError = False
 	data.buttonList = []
 	data.gridCorner = (60,60);
 	data.gridSize = 40	
@@ -240,6 +263,7 @@ def defineGlobals(data):
 	data.buttonDown = False
 	data.usedExamples = [0] * data.k
 	data.usedLabels = [0] * data.k
+	data.font = pygame.font.SysFont("monospace", 10)
 	
 
 
@@ -247,8 +271,9 @@ def defineGlobals(data):
 ## MAIN LOOP FUNCTIONS
 ##################################
 def init(data):
-	defineGlobals(data)
 	pygame.init()
+	defineGlobals(data)
+	
 	screen = pygame.display.set_mode((data.screenWidth,data.screenHeight))
 	data.screen = screen
 			
@@ -256,6 +281,7 @@ def init(data):
 def redraw(data):
 	drawGrid(data)
 	if data.drawNeighbors == True: drawHelpers(data)
+	elif data.showError == True: drawCrossVal(data)
 	pygame.display.update()
 	pass
 
