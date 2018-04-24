@@ -39,7 +39,7 @@ else:
 
 #net = NeuralNets.Net(100,5,10)
 
-knn = KNN.KNN(3)
+knn = KNN.KNN(5)
 tester = knnError.KNNTester(knn)
 
 #net = NeuralNets.Net(100,10,Neurons.Softmax(),NeuralNets.Net.crossEntropy,(Neurons.Sigmoid(), 10))
@@ -81,11 +81,13 @@ def train(data, val):
 	dataset.append((vector,label))
 
 
+
 def classify(data):
 	vector = grid2Vector(data.grid)
 	(pred, metaData) = knn.classify(dataset, vector)
-	#changeGuesses(data, usedData)
-	#data.drawNeighbors = True
+	changeGuesses(data, metaData)
+	data.drawNeighbors = True
+	data.showError = False
 	return pred
 """
 def softMaxLabel(val):
@@ -113,6 +115,7 @@ def netClassify(data):
 #################################
 
 def commandMode(data):
+
 	x = input(">> ")
 	if x == "clear":
 		clearGrid(data)
@@ -129,6 +132,7 @@ def commandMode(data):
 	elif x == "cross":
 		(err, matrix) = tester.crossValidate(15, dataset)
 		data.showError = True
+		data.drawNeighbors = False
 		data.matrix = matrix
 		#print("err = %d\n"%err)
 		#print(matrix)
@@ -176,10 +180,10 @@ def clearGridChanges(data):
 			data.gridChanged[row][col] = False
 
 def changeGuesses(data, usedData):
-	(examples, labels) = usedData
+	
 	for i in range(data.k):
-		data.usedExamples[i] = examples[i]
-		data.usedLabels[i] = labels[i]
+		data.usedExamples[i] = usedData[i][0]
+		data.usedLabels[i] = usedData[i][1]
 
 
 
@@ -228,8 +232,15 @@ def drawGridWithText(data, grid, labels):
 		for col in range(len(grid[0])):
 			x0 = util.col2X(col, frame) #inconsistant with where the x0 is offset (using frame, and inside drawrect)
 			y0 = util.row2Y(row, frame)
-			text = str(round(grid[row][col], 2))
-			util.drawTextRect(frame, (x0, y0, frame.scale, frame.scale), data.font, text, Colors.SILVER, Colors.BLACK)
+			n = grid[row][col]
+			text = str(round(n, 2))
+			if row == col:
+				color = Colors.GOLD
+			elif n < 1:
+				color = Colors.GREEN
+			else:
+				color = Colors.RED
+			util.drawTextRect(frame, (x0, y0, frame.scale, frame.scale), data.font, text, color, Colors.BLACK)
 
 def drawCrossVal(data):
 	drawGridWithText(data, data.matrix, range(10))
@@ -245,8 +256,8 @@ def drawCrossVal(data):
 
 
 def defineGlobals(data):
-	data.screenWidth = 1000
-	data.screenHeight = 1000
+	data.screenWidth = 1300
+	data.screenHeight = 500
 	data.usedExamples = None
 	data.usedLabels = None
 	data.margin = 10
@@ -259,7 +270,7 @@ def defineGlobals(data):
 	data.buttonList = []
 	data.gridCorner = (60,60);
 	data.gridSize = 40	
-	data.k = 3
+	data.k = 5
 	data.buttonDown = False
 	data.usedExamples = [0] * data.k
 	data.usedLabels = [0] * data.k
@@ -279,6 +290,7 @@ def init(data):
 			
 
 def redraw(data):
+	pygame.draw.rect(data.screen,Colors.LIGHT_GREY,(0,0,data.screenWidth,data.screenHeight),0)
 	drawGrid(data)
 	if data.drawNeighbors == True: drawHelpers(data)
 	elif data.showError == True: drawCrossVal(data)

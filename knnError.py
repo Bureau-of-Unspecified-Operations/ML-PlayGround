@@ -30,8 +30,8 @@ class KNNTester(object):
 			averageMatrix = np.add(averageMatrix, matrix)
 
 		error = errSum / k
-		errorMatrix = averageMatrix / k
-		return (error, errorMatrix)
+		#errorMatrix = averageMatrix / k
+		return (error, averageMatrix)
 
 
 	def predMatrix(self, trainingData, testData):
@@ -47,7 +47,4 @@ class KNNTester(object):
 		correct = 0
 		for i in range(len(matrix)):
 			correct += matrix[i][i]
-		print(correct)
-		print(total)
-		print(correct / total)
 		return correct / total
