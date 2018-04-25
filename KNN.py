@@ -1,3 +1,6 @@
+import numpy as np
+import math
+
 
 class KNN(object):
 	
@@ -33,9 +36,11 @@ class KNN(object):
 
 	def distance(self, p1, p2):
 		d = 0
-		for i in range(len(p1)):
-			d += (p1[i] - p2[i]) ** 2
-		return d
+		diff = np.subtract(p1,p2)
+		square = np.square(diff)
+		sum0 = np.sum(square)
+		return math.sqrt(sum0)
+		
 
 	def classify(self, trainingData, example):
 		nearest = [-1] * self.k

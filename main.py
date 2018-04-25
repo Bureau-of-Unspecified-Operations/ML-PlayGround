@@ -31,7 +31,6 @@ def fill2dList(l,val):
 
 dataFile0 = Path(dataPath0)
 if dataFile0.is_file():
-	print("got that good kush")
 	dataset = pickle.load(open(dataPath0, "rb"))
 
 else:
@@ -46,7 +45,6 @@ tester = knnError.KNNTester(knn)
 
 def newSaveData():
 	pickle.dump(dataset, open(dataPath0, "wb"))
-	print("did stuff")
 
 
 #################################
@@ -128,7 +126,7 @@ def commandMode(data):
 		print("Robot thinks it's %s"%p)
 		val = input("\nWas it right? input which digit it was\n")
 		train(data,val)
-		clearGrid(data)
+		#1111clearGrid(data)
 	elif x == "cross":
 		(err, matrix) = tester.crossValidate(15, dataset)
 		data.showError = True
@@ -180,10 +178,10 @@ def clearGridChanges(data):
 			data.gridChanged[row][col] = False
 
 def changeGuesses(data, usedData):
-	
 	for i in range(data.k):
 		data.usedExamples[i] = usedData[i][0]
 		data.usedLabels[i] = usedData[i][1]
+		data.usedDistance[i] = usedData[i][2]
 
 
 
@@ -212,13 +210,16 @@ def drawGridFromArray(data, array, x, y, cellSize):
 
 def drawHelpers(data):
 	x0 = 500 
-	y0 = 10
+	y0 = 50
 	cellSize = 10
 	for i in range(len(data.usedExamples)):
 		x = x0 + i * cellSize * 10 + data.margin
 		y = y0
-	
 		drawGridFromArray(data, data.usedExamples[i],x,y,cellSize)
+		text = str(round(10 * data.usedDistance[i], 3))
+		(tx, ty) = util.centerText(data.font,text, (x + x + cellSize * 10)//2, y0 + cellSize * 10 + data.margin)
+		data.screen.blit(data.font.render(text, True, Colors.BLACK), (tx,ty))
+
 
 
 
@@ -259,6 +260,7 @@ def defineGlobals(data):
 	data.screenWidth = 1300
 	data.screenHeight = 500
 	data.usedExamples = None
+	data.usedDistance = None
 	data.usedLabels = None
 	data.margin = 10
 	data.buttonWidth = 60
@@ -274,6 +276,8 @@ def defineGlobals(data):
 	data.buttonDown = False
 	data.usedExamples = [0] * data.k
 	data.usedLabels = [0] * data.k
+	data.usedDistance = [0] * data.k
+
 	data.font = pygame.font.SysFont("monospace", 10)
 	
 
