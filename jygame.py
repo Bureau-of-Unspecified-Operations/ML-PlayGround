@@ -27,3 +27,8 @@ class util(object):
 		(tx, ty) = util.centerText(font, text, cx, cy)
 		#print("X: %d, y: %d, tx: %d, ty: %d, cx: %d, cy: %d"%(x,y,tx,ty,cx,cy))
 		frame.screen.blit(font.render(text, True, tColor), (tx, ty))
+
+
+	#best for scalling up (cause integer division)
+	def rescale(x, lo0, hi0, lo1, hi1):
+		return (x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1) // (hi0 - lo0)

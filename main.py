@@ -12,7 +12,6 @@ dataPath = "digitVectors.p"
 labelsPath = "digitLabels.p"
 dataPath0 = "dataset.p"
 
-
 class Frame(object): pass
 
 def make2dList(rows, cols):
@@ -24,7 +23,7 @@ def make2dList(rows, cols):
 # destructive
 def fill2dList(l,val):
 	for row in range(len(l)):
-		for col in range(len(l[0])):
+		for col in range(len(l[0])): #bitches!!
 			l[row][col] = val
 
 
