@@ -276,6 +276,7 @@ def defineGlobals(data):
 	data.usedExamples = [0] * data.k
 	data.usedLabels = [0] * data.k
 	data.usedDistance = [0] * data.k
+	
 
 	data.font = pygame.font.SysFont("monospace", 10)
 	
@@ -287,9 +288,9 @@ def defineGlobals(data):
 def init(data):
 	pygame.init()
 	defineGlobals(data)
-	
 	screen = pygame.display.set_mode((data.screenWidth,data.screenHeight))
 	data.screen = screen
+
 			
 
 def redraw(data):

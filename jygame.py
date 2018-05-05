@@ -33,7 +33,7 @@ class util(object):
 	def rescale(x, lo0, hi0, lo1, hi1):
 		return (x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1) // (hi0 - lo0)
 
-class DrawableNeuron(obj):
+class DrawableNeuron(object):
 	def __init__(self,frame,cx,cy,cr,tx,ty,font,text,color):
 		self.frame = frame
 		self.cx = cx
@@ -46,5 +46,5 @@ class DrawableNeuron(obj):
 		self.color = color
 
 	def draw(self):
-		pygame.draw.circle(frame.screen, color, ())
-		frame.screen.blit(font.render(text, True, (0,0,0)), (tx,ty));
+		pygame.draw.circle(self.frame.screen, color, ())
+		self.frame.screen.blit(font.render(text, True, (0,0,0)), (tx,ty));

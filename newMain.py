@@ -1,6 +1,6 @@
 
 
-import pygame as py
+import pygame
 
 
 
@@ -8,26 +8,30 @@ import pygame as py
 class MachineLearningGameLoop(object):
 
 	def __init__(self):
-		self.models = dict()
+		self.models = list()
+		self.viewModels = list()
 
 		pygame.init()
 		infoObj = pygame.display.Info()
 		self.width = infoObj.current_w
 		self.height = infoObj.current_h
-		self.screen = pygame.display.set_mode(self.width, self.height)
-		self.frames = self.initFrames();
+		self.screen = pygame.display.set_mode((self.width, self.height))
+		self.frames = self.initFrames(); # need to connect frames int that dict		
 
-		
-
-	def initFrames():
-		cnt = len(models)
-		spacing = self.width // cnt
+	def initFrames(self):
+		self.frames = list()
+		cnt = len(self.models)
+		spacing = self.width if cnt == 0 else self.width // cnt
 		for i in range(cnt):
-			frame = Frame((i * spacing, 0), pygame.Surface((spacing, self.height)))
+			frame = Frame((i * spacing, 0), spacing, self.height, pygame.Surface((spacing, self.height)))
 			self.frames.append(frame)
 
+	def global2Frame(x,y):
+		for i,frame in enumerate(self.frames):
+			if frame.containsCoord(x,y):
+				return (i, frame.transform(x,y));
+		print("oops, no frame held your coord\n")
 
-	def updateDrawables(self):
 		
 
 	def init(self):
@@ -37,26 +41,36 @@ class MachineLearningGameLoop(object):
 		pass
 
 	def handleEvents(self):
-		pass
+		for event in pygame.event.get():
+			if(event.type == pygame.QUIT):
+
+			elif (event.type == pygame.MOUSEBUTTONDOWN):	
+
+			elif event.type == pygame.MOUSEBUTTONUP:
+
+			elif event.type == pygame.MOUSEMOTION:
+				
+			elif event.type == pygame.KEYDOWN:
+				
 
 	def redraw(self):
-		for model in self.models.keys():
-			viewModel = self.models[model][0]
-			frame = self.models[model][1]
+		for i in range(len(self.models)):
+			viewModel = self.viewModels[i]
+			frame = self.frames[i]
 			for drawable in viewModel.getDrawables(model):
 				drawable.draw(frame)
 
 		for frame in self.frames:
 			self.screen.blit(frame.screen, (frame.x0, frame.y0))
-			
+
 		pygame.display.update()
 
 	def run(self):
-		init()
+		self.init()
 		while True:
-			handleEvents();
-			step();
-			redraw();
+			self.handleEvents();
+			self.step();
+			self.redraw();
 		return False
 
 game = MachineLearningGameLoop()
