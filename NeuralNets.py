@@ -54,6 +54,7 @@ class Net(object):
 			hiddenLayer = Layer(args[i][0],args[i][1], Layer.HIDDEN)
 			self.connect(upLayer, hiddenLayer);
 		self.connect(hiddenLayer, self.outputLayer)
+		self.layerCount = 2 + len(args)
 
 
 	def compute(self, example):
