@@ -13,7 +13,7 @@ class NNDrawer(object):
 
 	def getDrawables(self, net):
 		shapes = list()
-		#neuronCoords = [list()] * net.layerCount
+		neuronCoords = [list()] * net.layerCount
 		r = 30
 		layerindex = 0
 		space = self.frame.height - self.frame.margin * 2 - 4 * r # empty space between input and output layer
@@ -35,9 +35,11 @@ class NNDrawer(object):
 			xB = 0 - r # makes future spacing consistant
 			for i in range(curLayer.nCount):
 				x = xB + (1 + i) * (neuronSpacing + 2 * r) 
-				#neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
-				print("neruons at (" + str(x) + "," + str(y) + ")" )
+				neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
+				#print("neruons at (" + str(x) + "," + str(y) + ")" )
 				shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[i]))
+				if curLayer.upLayer != None:
+					makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r)
 
 			layerindex += 1
 			curLayer = curLayer.downLayer
@@ -53,8 +55,16 @@ class NNDrawer(object):
 		(tx, ty) = jp.util.centerText(self.font,text, cx, cy);
 		return jp.DrawableTextCircle(cx, cy, cr, tx, ty, self.font, text, color)
 
+	def makeLines(self,weights, point, points, r):
+		assert(len(weights) == len(points))
+		for i in range(len(weights)):
+			pass
+
 
 	def mouseEvent(self, x, y, type):
+		pass
+
+	def quit(self):
 		pass
 
 

@@ -16,10 +16,11 @@ class MachineLearningGameLoop(object):
 	def __init__(self):
 		pygame.init()
 		infoObj = pygame.display.Info()
+		self.width = infoObj.current_w
+		self.height = infoObj.current_h - 60
+	
+		self.screen = pygame.display.set_mode((self.width, self.height))
 		
-		self.screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
-		(self.width, self.height) = self.screen.get_size() #infoObj.current_w
-		 #= self.screen.height #infoObj.current_h
 		print(self.width)
 		print(self.height)
 
@@ -79,7 +80,7 @@ class MachineLearningGameLoop(object):
 				pass
 
 	def redraw(self):
-		self.screen.fill(Colors.GREEN)
+		self.screen.fill(Colors.RED)
 		for frame in self.frames:
 			pygame.draw.rect(frame.screen, Colors.GREEN, (frame.x,frame.y,frame.width,frame.height), 0)
 
@@ -92,7 +93,7 @@ class MachineLearningGameLoop(object):
 		for frame in self.frames:
 			self.screen.blit(frame.screen, (frame.x, frame.y))
 
-		pygame.draw.line(self.screen, Colors.RED,(0,1000),(1600,1000),10)
+	
 		pygame.display.update()
 
 
