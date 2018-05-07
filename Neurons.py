@@ -2,6 +2,9 @@ import math
 import numpy as np
 
 class Sigmoid(object):
+	lo = 0
+	hi = 1
+	text = "Sig"
 	def fire(self, netArr):
 		def func(x):
 			return 1 / (1 + math.exp(-x))
@@ -10,6 +13,7 @@ class Sigmoid(object):
 
 	def derivative(self, netArr, label):
 		return np.multiply(netArr, 1 - netArr)
+	
 		
 
 class Softmax(object):
@@ -29,7 +33,17 @@ class Softmax(object):
 		arr = np.zeros(len(softOut))
 		for i in range(len(arr)):
 			arr[i] = 1 - softOut[i] if i == index else -softOut[i]
-		return softOut[index] * arr		
+		return softOut[index] * arr	
+
+class Blank(object):
+	hi = 1
+	lo = 0
+	text = "input"
+	def fire(self, netArr):
+		pass
+	
+
+
 
 class Perceptron(object):
 	def fire(self, net):

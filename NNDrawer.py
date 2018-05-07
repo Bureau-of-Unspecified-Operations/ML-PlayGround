@@ -1,58 +1,60 @@
 
 import NeuralNets as nets
-import jygame as jy
+import jygame as jp
+import pygame
 
 
 
-def NNDrawer(object):
+class NNDrawer(object):
 
-	def __init__(self, frame, net):
-		self.x0 = frame.x0
-		self.y0 = frame.y0
-		self.width = frame.width
-		self.height = frame.height
-		self.net
+	def __init__(self, frame):
+		self.frame = frame
 		self.font = pygame.font.SysFont("monospace", 10)
 
-
-	
-
-
-	def update(self):
+	def getDrawables(self, net):
 		shapes = list()
+		#neuronCoords = [list()] * net.layerCount
+		r = 30
 		layerindex = 0
-		space = self.height - self.margin * 2 - 4 * r # empty space between input and output layer
-		layerSpacing = (space - self.net.layerCount * 2 * r) // (self.net.layerCount + 1) #could be too small and get screwed
+		space = self.frame.height - self.frame.margin * 2 - 4 * r # empty space between input and output layer
+		layerSpacing = (space - net.layerCount * 2 * r) // (net.layerCount + 1) #could be too small and get screwed
 
-		while layer != nets.Layer.INPUT:
+		curLayer = net.inputLayer
+
+		while curLayer != None:
 			
-			if layer.type == nets.Layer.OUTPUT:
-				y = self.y0 + self.margin + r
-			elif layer.type == nets.Layer.INPUT:
-				y = self.y0 + self.height - self.margin -r
-			else: y = self.y0 + self.margin + r + (layerindex + 1) * (layerSpacing + 2 * r)
+			if curLayer.type == nets.Layer.OUTPUT:
+				y = self.frame.margin + r
+			elif curLayer.type == nets.Layer.INPUT:
+				y = self.frame.height - self.frame.margin - r
+			else: y = self.frame.margin + r + (layerindex + 1) * (layerSpacing + 2 * r)
 
-			neuronSpacing = (self.width - nCount * 2 * r) // (nCount + 1)
+			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
 			if(neuronSpacing < 2 * r): print("too small")
 
-			xB = self.x0 - r #makes future spacing consistant
-			for i in range(len(layer.nCount)):
+			xB = 0 - r # makes future spacing consistant
+			for i in range(curLayer.nCount):
 				x = xB + (1 + i) * (neuronSpacing + 2 * r) 
-				shapes.append(createNeuron((x,y,r), neuron, layer.cachedOutputs[i]))
+				#neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
+				print("neruons at (" + str(x) + "," + str(y) + ")" )
+				shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[i]))
 
 			layerindex += 1
+			curLayer = curLayer.downLayer
 
 		return shapes
 
 
 	def createNeuron(self,circle, neuron, output):
-		rgb = jp.rescale(output, neuron.lo, neuron.hi, 0, 255)
+		rgb = jp.util.rescale(output, neuron.lo, neuron.hi, 0, 255)
 		color = (rgb, rgb, rgb)
 		text = neuron.text
 		(cx, cy, cr) = circle
-		(tx, ty) = jy.util.centerText(font,text, cx, cy);
-		return DrawableNeuron(frame, cx, cy, cr, tx, ty, self.font, text, color)
+		(tx, ty) = jp.util.centerText(self.font,text, cx, cy);
+		return jp.DrawableTextCircle(cx, cy, cr, tx, ty, self.font, text, color)
 
 
+	def mouseEvent(self, x, y, type):
+		pass
 
 

@@ -3,6 +3,10 @@ import Neurons
 
 
 
+
+
+
+
 class Layer(object):
 	HIDDEN = 0
 	INPUT = 1
@@ -45,7 +49,7 @@ class InputLayer(Layer):
 class Net(object):
 	# args should be a list of (neuron, nCount) pairs describing the hidden layers you want
 	def __init__(self, inputSize, outputSize, outputNeuron, lossDerivative, *args):
-		self.inputLayer = Layer(None, inputSize, Layer.INPUT)
+		self.inputLayer = Layer(Neurons.Blank, inputSize, Layer.INPUT)
 		self.outputLayer = Layer(outputNeuron, outputSize, Layer.OUTPUT)
 		self.lossDerivative = lossDerivative
 		hiddenLayer = None
@@ -118,6 +122,11 @@ class Net(object):
 			if label[i] == 1: index = i 
 		assert(index != -1)
 		return -1 / layer[index]
+
+	def leastSquaredDerivative(output, label):
+		assert(len(output) == len(label))
+		error = np.subtract(output,label)
+		return error
 
 	def adapterCompute(self, example):
 		results = self.compute(example)

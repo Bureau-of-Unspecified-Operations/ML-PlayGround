@@ -2,6 +2,11 @@
 
 import pygame
 import sys
+import NeuralNets as nets
+import Neurons
+import NNDrawer as NND
+import jygame as jp
+import Colors
 
 
 
@@ -9,15 +14,21 @@ import sys
 class MachineLearningGameLoop(object):
 
 	def __init__(self):
-		self.models = list()
-		self.viewModels = list()
-
 		pygame.init()
 		infoObj = pygame.display.Info()
-		self.width = infoObj.current_w
-		self.height = infoObj.current_h
-		self.screen = pygame.display.set_mode((self.width, self.height))
-		self.frames = self.initFrames(); # might want to be in func init?	
+		
+		self.screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+		(self.width, self.height) = self.screen.get_size() #infoObj.current_w
+		 #= self.screen.height #infoObj.current_h
+		print(self.width)
+		print(self.height)
+
+		self.models = list()
+		self.models.append(nets.Net(4, 3, Neurons.Sigmoid, nets.Net.leastSquaredDerivative,((Neurons.Sigmoid,5))))
+		self.frames = self.initFrames(); # might want to be in func init?
+		self.viewModels = list()
+		self.viewModels.append(NND.NNDrawer(self.frames[0]))
+
 
 
 	#basic bitch split it all evenly
@@ -27,8 +38,9 @@ class MachineLearningGameLoop(object):
 		spacing = self.width if cnt == 0 else self.width // cnt
 		for i in range(cnt):
 			print("in range")
-			frame = Frame((i * spacing, 0), spacing, self.height, pygame.Surface((spacing, self.height)))
-			self.frames.append(frame)
+			frame = jp.Frame((i * spacing, 0), spacing, self.height, pygame.Surface((spacing, self.height)))
+			frame.margin = 10
+			frames.append(frame)
 		return frames
 
 	def global2Frame(self,x,y):  # dif scope/not in the class?
@@ -67,15 +79,20 @@ class MachineLearningGameLoop(object):
 				pass
 
 	def redraw(self):
+		self.screen.fill(Colors.GREEN)
+		for frame in self.frames:
+			pygame.draw.rect(frame.screen, Colors.GREEN, (frame.x,frame.y,frame.width,frame.height), 0)
+
 		for i in range(len(self.models)):
 			viewModel = self.viewModels[i]
 			frame = self.frames[i]
-			for drawable in viewModel.getDrawables(model):
+			for drawable in viewModel.getDrawables(self.models[i]):
 				drawable.draw(frame)
 
 		for frame in self.frames:
-			self.screen.blit(frame.screen, (frame.x0, frame.y0))
+			self.screen.blit(frame.screen, (frame.x, frame.y))
 
+		pygame.draw.line(self.screen, Colors.RED,(0,1000),(1600,1000),10)
 		pygame.display.update()
 
 
