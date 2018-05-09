@@ -53,6 +53,18 @@ class util(object):
 			shapes.append(DrawableCircle(cx, cy, rD, Colors.WHITE))
 		return shapes
 
+	def make2dList(rows, cols):
+	a = []
+	for row in range(rows):
+		a.append([False] * cols);
+	return a
+
+	# destructive
+	def fill2dList(l,val):
+		for row in range(len(l)):
+			for col in range(len(l[0])): #bitches!!
+				l[row][col] = val
+
 
 class DrawableCircle(object):
 	def __init__(self,cx,cy,cr, color):
@@ -105,6 +117,10 @@ class Frame(object):
 		x0 = x - self.x
 		y0 = y - self.y
 		return (x0, y0)
+
+class DrawableGrid(object):
+
+	def __init__(self, cells, cellWidth,)
 
 class PlusButton(object):
 	r = 10
