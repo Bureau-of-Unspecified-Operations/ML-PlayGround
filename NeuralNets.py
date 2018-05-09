@@ -161,8 +161,8 @@ class NetEditor(object):
 		else: print("can't splice out, there aren't layers on either side")
 
 	def spliceIn(layer, upLayer, downLayer):
-		self.connect(upLayer, layer)
-		self.connect(layer, downLayer);
+		NetEditor.connect(upLayer, layer)
+		NetEditor.connect(layer, downLayer);
 
 
 		#not safe for end layers

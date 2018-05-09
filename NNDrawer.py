@@ -93,8 +93,12 @@ class NNDrawer(object):
 				if curLayer.upLayer != None:
 					shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
 
-			if(curLayer.type != nets.Layer.INPUT):
+			if(curLayer.type != nets.Layer.INPUT and curLayer.type != nets.Layer.OUTPUT):
 				self.buttons.append(DeleteLayer(curLayer, (x0 - self.frame.margin * 10, y)))
+			if curLayer.type != nets.Layer.INPUT:
+				xm = x0
+				ym = y + layerSpacing // 2
+				self.buttons.append(AddLayer(curLayer.upLayer, curLayer,(xm,ym)))
 
 			layerindex += 1
 			curLayer = curLayer.downLayer
@@ -125,6 +129,19 @@ class DeleteLayer(object):
 
 	def inRange(self, x, y):
 		return jp.util.inCircleRange(x, y, self.x, self.y, self.r)
+
+class AddLayer(DeleteLayer):
+
+	def __init__(self, upLayer, downLayer, coord):
+		self.upLayer = upLayer
+		self.downLayer = downLayer
+		(self.x, self.y) = coord
+		self.r = 10
+		self.color = Colors.ORANGE
+
+	def onClick(self):
+		layer = nets.Layer(Neurons.Sigmoid, 3, nets.Layer.HIDDEN)
+		nets.NetEditor.spliceIn(layer,self.upLayer, self.downLayer)
 
 
 
