@@ -35,9 +35,10 @@ class NNDrawer(object):
 		# print("len of weights " + str(len(weights)))
 		# print("len of points " + str(len(points)))
 		# print(points)
-		assert(len(weights) == len(points))
+		##assert(len(weights) == len(points))
+		##WILL BE ADDING SHIT WHEN YOU ACTUALLY USE WEIGHTS
 		shapes = list()
-		for i in range(len(weights)):
+		for i in range(len(points)):
 			(x1, y1) = point
 			(x2, y2) = points[i]
 			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), 3, Colors.RED))
@@ -85,20 +86,33 @@ class NNDrawer(object):
 
 
 			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
-			if(neuronSpacing < 2 * r): print("too small")
-			x0 = 0
-			xB = 0 - r # makes future spacing consistant
-			for i in range(curLayer.nCount):
-				# print("i " + str(i))
-				# print("ind " + str(layerindex))
-				x = xB + (1 + i) * (neuronSpacing + 2 * r) 
-				if i == 0: x0 = x
-				#print(neuronCoords)
-				neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
-				#print("neruons at (" + str(x) + "," + str(y) + ")" )
-				shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[i]))
-				if curLayer.upLayer != None:
-					shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
+			minxSpacing = 200
+			maxNeurons = (self.frame.width - minxSpacing) // (minxSpacing + 2 * r)
+			if(neuronSpacing < minxSpacing):
+				xB = 0 - r
+				for i in range(maxNeurons):
+					if i == maxNeurons // 2:
+						pass
+					else:
+						x = xB + (1 + i) * (minxSpacing + 2 * r)
+						j = self.collapsedIndex(curLayer.nCount, maxNeurons, i) 
+						neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
+						shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[j]))
+						if curLayer.upLayer != None:
+							shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
+			else:
+				x0 = 0
+				xB = 0 - r # makes future spacing consistant
+				for i in range(curLayer.nCount):
+					# print("i " + str(i))
+					# print("ind " + str(layerindex))
+					x = xB + (1 + i) * (neuronSpacing + 2 * r) 
+					if i == 0: x0 = x
+					#print(neuronCoords)
+					neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
+					shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[i]))
+					if curLayer.upLayer != None:
+						shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
 
 			if(curLayer.type != nets.Layer.INPUT and curLayer.type != nets.Layer.OUTPUT):
 				self.buttons.append(DeleteLayer(curLayer, (x0 - self.frame.margin * 10, y)))
@@ -120,7 +134,13 @@ class NNDrawer(object):
 
 		return shapes
 
+	def collapsedIndex(self, realCnt, visCnt, i):
+		if i < visCnt // 2:
+			return i
+		elif i > visCnt // 2:
+			return realCnt - visCnt + i
 
+		else: print("error in collapsed")
 
 
 
