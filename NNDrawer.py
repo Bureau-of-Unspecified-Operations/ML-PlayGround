@@ -12,7 +12,7 @@ class NNDrawer(object):
 
 	def __init__(self, frame):
 		self.frame = frame
-		self.net = nets.NetEditor.newNet(2, 1, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
+		self.net = nets.NetEditor.newNet(2, 1, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
 		self.buttons = list()
 		self.font = pygame.font.SysFont("monospace", 10)
 
@@ -61,18 +61,25 @@ class NNDrawer(object):
 		neuronCoords = [list() for i in range(lc)]
 		r = 30
 		layerindex = 0
+
 		space = self.frame.height - self.frame.margin * 2 - 4 * r # empty space between input and output layer
-		layerSpacing = (space - lc * 2 * r) // (lc + 1) #could be too small and get screwed
+		print("space " + str(space))
+		layerSpacing = (space - (lc - 2) * 2 * r) // (lc - 1) #could be too small and get screwed
+		print("layerspacing " + str(layerSpacing))
+		
 
 		curLayer = net.inputLayer
 
 		while curLayer != None:
-			
+			print("index " + str(layerindex))
+			print("layer type " + str(curLayer.type))
 			if curLayer.type == nets.Layer.OUTPUT:
 				y = self.frame.margin + r
 			elif curLayer.type == nets.Layer.INPUT:
 				y = self.frame.height - self.frame.margin - r
-			else: y = self.frame.height - (self.frame.margin + r + (layerindex + 1) * (layerSpacing + 2 * r)) #goes from the bottom up
+			else: y = self.frame.height - (self.frame.margin + r + (layerindex) * (layerSpacing + 2 * r)) #goes from the bottom up
+			print("y " + str(y) + "  index amount " + str((layerindex + 1) * (layerSpacing + 2 * r)))
+
 
 			
 
@@ -96,10 +103,12 @@ class NNDrawer(object):
 			if(curLayer.type != nets.Layer.INPUT and curLayer.type != nets.Layer.OUTPUT):
 				self.buttons.append(DeleteLayer(curLayer, (x0 - self.frame.margin * 10, y)))
 			if curLayer.type != nets.Layer.INPUT:
-				xm = x0
+				xm = x0 - self.frame.margin * 10
 				ym = y + layerSpacing // 2
 				self.buttons.append(AddLayer(curLayer.upLayer, curLayer,(xm,ym)))
 
+			
+			#print(neuronCoords)
 			layerindex += 1
 			curLayer = curLayer.downLayer
 
