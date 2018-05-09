@@ -3,7 +3,10 @@ import math
 import Colors
 
 
+
 class util(object):
+	
+
 	def dist(p0, p1):
 		assert(len(p0) == len(p1))
 		s = 0
@@ -13,6 +16,10 @@ class util(object):
 
 	def inCircleRange(x0, y0, x1, y1, r):
 		return util.dist((x0,y0),(x1,y1)) <= r
+
+	def inRectRange(x0, y0, rx, ry, rw, rh):
+		return (x0 <= rx + rw and x0 > rx and
+			   y0 <= ry + rh and y0 > ry)
 
 	def centerText(font, text, x, y):
 		width, height = font.size(text)
@@ -144,9 +151,57 @@ class DrawableGrid(object):
 				pygame.draw.rect(frame.screen,color, rect,0)
 
 
-class PlusButton(object):
-	r = 10
-	color = Colors.SILVER
+
+
+class FrequencyTable(object):
+	def __init__(self, freqTable, x, y, spacing):
+		self.freqTable = freqTable
+		self.x = x
+		self.y = y
+		self.spacing = spacing
+		self.font = pygame.font.SysFont("monospace", 10)
+
+	def draw(self, frame):
+		for i, key in enumerate(self.freqTable.keys()):
+			text = str(key) + ": " + str(self.freqTable[key]) + " instances"
+			x = self.x
+			y = self.y + i * self.spacing
+			frame.screen.blit(self.font.render(text, True, Colors.BLACK), (x, y))
+####################3
+## BUTTONS
+####################
+
+class TestButton(object):
+
+	def __init__(self):
+		pass
+
+	def onClick(self):
+		self.buttons.extend(self.dataModel.getTestButtons())
+		self.shapes.extend(self.dataModel.getTestDrawables())
+
+
+
+class GenericRectButton(object):
+	def __init__(self, function, text, rect):
+		self.function = function
+		self.text = text
+		self.rect = rect
+		self.color = Colors.SILVER
+		self.font = pygame.font.SysFont("monospace", 15)
+		(self.tx, self.ty) = util.centerText(self.font, self.text, self.rect[0] + self.rect[2] // 2, self.rect[1] + rect[3] // 2) 
+
+	def onClick(self):
+		self.function()
+
+	def draw(self, frame):
+		print("hello")
+		pygame.draw.rect(frame.screen, self.color, self.rect)
+		frame.screen.blit(self.font.render(self.text, True, Colors.ORANGE), (self.tx, self.ty));
+
+	def inRange(self, x, y):
+		(rx, ry, rw, rh) = self.rect
+		return util.inRectRange(x, y, rx, ry, rw, rh)
 
 
 #################################################33

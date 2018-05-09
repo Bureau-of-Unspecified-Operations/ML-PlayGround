@@ -5,6 +5,7 @@ import sys
 import NeuralNets as nets
 import Neurons
 import DigitDrawerViewModel as ddvm
+import DataViewModel as dvm
 import NNDrawer as NND
 import jygame as jp
 import Colors
@@ -27,9 +28,9 @@ class MachineLearningGameLoop(object):
 
 		self.frames = self.initFrames(); # might want to be in func init?
 		self.viewModels = list()
-		self.viewModels.append(NND.NNDrawer(self.frames[0]))
-		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[1]))
-		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[1]))
+		self.viewModels.append(dvm.DataView(self.frames[0]))
+		self.viewModels.append(NND.NNDrawer(self.frames[1]))
+		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[2]))
 
 
 
@@ -37,13 +38,13 @@ class MachineLearningGameLoop(object):
 	#basic bitch split it all evenly
 	def initFrames(self):
 		frames = list()		
-		frame = jp.Frame((0, 0), self.width // 2, self.height)
+		frame = jp.Frame((0, 0), 150, self.height)
 		frame.margin = 10
 		frames.append(frame)
-		frame = jp.Frame((self.width // 2, 0), self.width // 2, self.height // 2)
+		frame = jp.Frame((150, 0), (self.width - 150) // 2, self.height)
 		frame.margin = 10
 		frames.append(frame)
-		frame = jp.Frame((self.width // 2, self.height // 2), self.width // 2, self.height // 2)
+		frame = jp.Frame(((self.width - 150) // 2 + 150, 0), (self.width - 150) // 2, self.height)
 		frame.margin = 10
 		frames.append(frame)
 		return frames
@@ -86,12 +87,12 @@ class MachineLearningGameLoop(object):
 	def redraw(self):
 		self.screen.fill(Colors.RED)
 		for frame in self.frames:
-			print(frame)
+			#print(frame)
 			pygame.draw.rect(frame.screen, Colors.GREEN, (0,0,frame.width,frame.height), 0)
 
 		for i in range(len(self.viewModels)):
 			viewModel = self.viewModels[i]
-			frame = self.frames[i]
+			frame = self.frames[i]   #INTERSESTING, the frame you pass to the viewmodel does not have to be this same frame.
 			for drawable in viewModel.getDrawables():
 				drawable.draw(frame)
 
@@ -100,6 +101,8 @@ class MachineLearningGameLoop(object):
 
 	
 		pygame.display.update()
+
+	
 
 
 	def run(self):

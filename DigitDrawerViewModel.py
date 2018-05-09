@@ -11,6 +11,7 @@ class DigitDrawerVM(object):
 		self.x = 10
 		self.y = 10
 		self.isDrawing = False
+		self.popUps = list()
 
 	def getDrawables(self):
 		shapes = list()
@@ -35,5 +36,5 @@ class DigitDrawerVM(object):
 				self.colorGrid(x,y)
 
 		
-		def quit():
-			pass
+	def quit(self):
+		pass

@@ -15,6 +15,8 @@ class NNDrawer(object):
 		self.net = nets.NetEditor.newNet(100, 10, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
 		self.buttons = list()
 		self.font = pygame.font.SysFont("monospace", 10)
+		
+		self.popUps = list()
 
 	def getDrawables(self):
 		shapes = list()
@@ -64,22 +66,22 @@ class NNDrawer(object):
 		layerindex = 0
 
 		space = self.frame.height - self.frame.margin * 2 - 4 * r # empty space between input and output layer
-		print("space " + str(space))
+		#print("space " + str(space))
 		layerSpacing = (space - (lc - 2) * 2 * r) // (lc - 1) #could be too small and get screwed
-		print("layerspacing " + str(layerSpacing))
+		#print("layerspacing " + str(layerSpacing))
 		
 
 		curLayer = net.inputLayer
 
 		while curLayer != None:
-			print("index " + str(layerindex))
-			print("layer type " + str(curLayer.type))
+			# print("index " + str(layerindex))
+			# print("layer type " + str(curLayer.type))
 			if curLayer.type == nets.Layer.OUTPUT:
 				y = self.frame.margin + r
 			elif curLayer.type == nets.Layer.INPUT:
 				y = self.frame.height - self.frame.margin - r
 			else: y = self.frame.height - (self.frame.margin + r + (layerindex) * (layerSpacing + 2 * r)) #goes from the bottom up
-			print("y " + str(y) + "  index amount " + str((layerindex + 1) * (layerSpacing + 2 * r)))
+			#print("y " + str(y) + "  index amount " + str((layerindex + 1) * (layerSpacing + 2 * r)))
 
 
 			
@@ -88,7 +90,7 @@ class NNDrawer(object):
 			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
 			minxSpacing = 100
 			maxNeurons = (self.frame.width - minxSpacing) // (minxSpacing + 2 * r)
-			print("max neuron " + str(maxNeurons))
+			#print("max neuron " + str(maxNeurons))
 			if(neuronSpacing < minxSpacing):
 				x0 = 0
 				xB = 0 - r
