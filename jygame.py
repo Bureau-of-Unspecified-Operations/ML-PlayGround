@@ -48,6 +48,16 @@ class DrawableTextCircle(object):
 		pygame.draw.circle(frame.screen, self.color, (self.cx, self.cy), self.cr)
 		frame.screen.blit(self.font.render(self.text, True, (0,0,0)), (self.tx, self.ty));
 
+class DrawableLine(object):
+	def __init__(self, start, end, thickness, color):
+		self.start = start
+		self.end = end
+		self.thickness = thickness;
+		self.color = color
+		
+	def draw(self, frame):
+		pygame.draw.line(frame.screen, self.color, self.start, self.end, self.thickness)
+
 class Frame(object):
 	def __init__(self, coord, width, height, screen):
 		(self.x, self.y) = coord

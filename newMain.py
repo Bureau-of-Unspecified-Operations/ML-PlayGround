@@ -24,8 +24,6 @@ class MachineLearningGameLoop(object):
 		print(self.width)
 		print(self.height)
 
-		self.models = list()
-		self.models.append(nets.Net(4, 3, Neurons.Sigmoid, nets.Net.leastSquaredDerivative,((Neurons.Sigmoid,5))))
 		self.frames = self.initFrames(); # might want to be in func init?
 		self.viewModels = list()
 		self.viewModels.append(NND.NNDrawer(self.frames[0]))
@@ -35,7 +33,7 @@ class MachineLearningGameLoop(object):
 	#basic bitch split it all evenly
 	def initFrames(self):
 		frames = list()
-		cnt = len(self.models)
+		cnt = 1  #HACK!!
 		spacing = self.width if cnt == 0 else self.width // cnt
 		for i in range(cnt):
 			print("in range")
@@ -84,10 +82,10 @@ class MachineLearningGameLoop(object):
 		for frame in self.frames:
 			pygame.draw.rect(frame.screen, Colors.GREEN, (frame.x,frame.y,frame.width,frame.height), 0)
 
-		for i in range(len(self.models)):
+		for i in range(len(self.viewModels)):
 			viewModel = self.viewModels[i]
 			frame = self.frames[i]
-			for drawable in viewModel.getDrawables(self.models[i]):
+			for drawable in viewModel.getDrawables():
 				drawable.draw(frame)
 
 		for frame in self.frames:

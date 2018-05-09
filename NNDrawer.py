@@ -1,7 +1,10 @@
 
 import NeuralNets as nets
+import Neurons
 import jygame as jp
 import pygame
+import Colors
+
 
 
 
@@ -9,11 +12,52 @@ class NNDrawer(object):
 
 	def __init__(self, frame):
 		self.frame = frame
+		self.net = nets.NetEditor.newNet(2, 4, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3))
+
 		self.font = pygame.font.SysFont("monospace", 10)
 
-	def getDrawables(self, net):
+	def getDrawables(self):
 		shapes = list()
-		neuronCoords = [list()] * net.layerCount
+		shapes.extend(self.drawablesFromNet(self.net))
+
+		return shapes
+
+
+	
+
+
+
+	def createNeuron(self,circle, neuron, output):
+		rgb = jp.util.rescale(output, neuron.lo, neuron.hi, 0, 255)
+		color = (rgb, rgb, rgb)
+		text = neuron.text
+		(cx, cy, cr) = circle
+		(tx, ty) = jp.util.centerText(self.font,text, cx, cy);
+		return jp.DrawableTextCircle(cx, cy, cr, tx, ty, self.font, text, color)
+
+	def makeLines(self,weights, point, points, r):
+		print("len of weights " + str(len(weights)))
+		print("len of points " + str(len(points)))
+		print(points)
+		assert(len(weights) == len(points))
+		shapes = list()
+		for i in range(len(weights)):
+			(x1, y1) = point
+			(x2, y2) = points[i]
+			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), 3, Colors.RED))
+		return shapes
+
+
+	def mouseEvent(self, x, y, type):
+		#self.net.compute(example);
+		pass
+
+	def quit(self):
+		pass
+
+	def drawablesFromNet(self, net):
+		shapes = list()
+		neuronCoords = [list() for i in range(net.layerCount)]
 		r = 30
 		layerindex = 0
 		space = self.frame.height - self.frame.margin * 2 - 4 * r # empty space between input and output layer
@@ -27,44 +71,26 @@ class NNDrawer(object):
 				y = self.frame.margin + r
 			elif curLayer.type == nets.Layer.INPUT:
 				y = self.frame.height - self.frame.margin - r
-			else: y = self.frame.margin + r + (layerindex + 1) * (layerSpacing + 2 * r)
+			else: y = self.frame.height - (self.frame.margin + r + (layerindex + 1) * (layerSpacing + 2 * r)) #goes from the bottom up
 
 			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
 			if(neuronSpacing < 2 * r): print("too small")
 
 			xB = 0 - r # makes future spacing consistant
 			for i in range(curLayer.nCount):
+				print("i " + str(i))
+				print("ind " + str(layerindex))
 				x = xB + (1 + i) * (neuronSpacing + 2 * r) 
+				print(neuronCoords)
 				neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
 				#print("neruons at (" + str(x) + "," + str(y) + ")" )
 				shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[i]))
 				if curLayer.upLayer != None:
-					makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r)
+					shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
 
 			layerindex += 1
 			curLayer = curLayer.downLayer
-
 		return shapes
 
-
-	def createNeuron(self,circle, neuron, output):
-		rgb = jp.util.rescale(output, neuron.lo, neuron.hi, 0, 255)
-		color = (rgb, rgb, rgb)
-		text = neuron.text
-		(cx, cy, cr) = circle
-		(tx, ty) = jp.util.centerText(self.font,text, cx, cy);
-		return jp.DrawableTextCircle(cx, cy, cr, tx, ty, self.font, text, color)
-
-	def makeLines(self,weights, point, points, r):
-		assert(len(weights) == len(points))
-		for i in range(len(weights)):
-			pass
-
-
-	def mouseEvent(self, x, y, type):
-		pass
-
-	def quit(self):
-		pass
 
 

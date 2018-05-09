@@ -32,33 +32,29 @@ class Layer(object):
 	def setWeights(self, n):
 		self.weights = [np.zeros(n)] * self.nCount  #make all array for effic
 
-"""
-class HiddenLayer(Layer):
-	def __init__(self, neuron, nCount):
-		super().__init__(neuron, nCount, Layer.HIDDEN)
-
-class OutputLayer(Layer):
-	def __init__(self, neuron, nCount):
-		super().__init__(neuron, nCount, Layer.OUTPUT)
-
-class InputLayer(Layer):
-	def __init__(self, nCount):
-		super().__init__(None, nCount, Layer.INPUT)
-"""
 
 class Net(object):
 	# args should be a list of (neuron, nCount) pairs describing the hidden layers you want
-	def __init__(self, inputSize, outputSize, outputNeuron, lossDerivative, *args):
-		self.inputLayer = Layer(Neurons.Blank, inputSize, Layer.INPUT)
-		self.outputLayer = Layer(outputNeuron, outputSize, Layer.OUTPUT)
+	# def __init__(self, inputSize, outputSize, outputNeuron, lossDerivative, *args):
+	# 	self.inputLayer = Layer(Neurons.Blank, inputSize, Layer.INPUT)
+	# 	self.outputLayer = Layer(outputNeuron, outputSize, Layer.OUTPUT)
+	# 	self.lossDerivative = lossDerivative
+	# 	hiddenLayer = None
+	# 	upLayer = self.inputLayer
+	# 	for i in range(len(args)):
+	# 		print(args[i][0])
+	# 		print(args[i][1])
+	# 		hiddenLayer = Layer(args[i][0],args[i][1], Layer.HIDDEN)
+	# 		self.connect(upLayer, hiddenLayer);
+	# 		upLayer = hiddenLayer
+	# 	self.connect(hiddenLayer, self.outputLayer)
+	# 	self.layerCount = 2 + len(args)
+
+	def __init__(self, inputLayer, outputLayer, layerCount, lossDerivative):
+		self.inputLayer = inputLayer
+		self.outputLayer = outputLayer
 		self.lossDerivative = lossDerivative
-		hiddenLayer = None
-		upLayer = self.inputLayer
-		for i in range(len(args)):
-			hiddenLayer = Layer(args[i][0],args[i][1], Layer.HIDDEN)
-			self.connect(upLayer, hiddenLayer);
-		self.connect(hiddenLayer, self.outputLayer)
-		self.layerCount = 2 + len(args)
+		self.layerCount = layerCount
 
 
 	def compute(self, example):
@@ -74,6 +70,8 @@ class Net(object):
 		upLayer.downLayer = downLayer
 		downLayer.upLayer = upLayer
 		downLayer.setWeights(upLayer.nCount)
+
+	
 
 	def train(self, data, labels):
 		# assert len(data) == len(labels)
@@ -140,6 +138,48 @@ class Net(object):
 				self.backpropagateSGD(example, labels[i], step)
 
 
+class NetEditor(object):
+
+	
+
+	def connect(upLayer, downLayer):
+		upLayer.downLayer = downLayer
+		downLayer.upLayer = upLayer
+		downLayer.setWeights(upLayer.nCount)
+
+	def spliceOut(layer):
+		if layer.upLayer != None and layer.downLayer != None:
+			NetEditor.connect(layer.upLayer, layer.downLayer);
+		else: print("can't splice out, there aren't layers on either side")
+
+	def spliceIn(layer, upLayer, downLayer):
+		self.connect(upLayer, layer)
+		self.connect(layer, downLayer);
+
+		#not safe for end layers
+	def editNode(layer, op, neuron):
+		layer.nCount += op
+		if(neuron != None): layer.neuron = neuron
+		if op != 0:
+			layer.cachedOutput = np.zeros(layer.nCount)
+			layer.cachedSigmas = np.zeros(layer.nCount)
+			cntUpper = layer.upLayer.nCount
+			layer.setWeights(cntUpper)
+			layer.downLayer.setWeights(layer.nCount)
+
+	#net Constructor
+	def newNet(inputSize, outputSize, outputNeuron, lossDerivative, *args):
+		inputLayer = Layer(Neurons.Blank, inputSize, Layer.INPUT)
+		outputLayer = Layer(outputNeuron, outputSize, Layer.OUTPUT)
+		hiddenLayer = None
+		upLayer = inputLayer
+		for i in range(len(args)):
+			hiddenLayer = Layer(args[i][0],args[i][1], Layer.HIDDEN)
+			NetEditor.connect(upLayer, hiddenLayer);
+			upLayer = hiddenLayer
+		NetEditor.connect(hiddenLayer, outputLayer)
+		layerCount = 2 + len(args)
+		return Net(inputLayer, outputLayer, layerCount, lossDerivative)
 
 
 
@@ -147,37 +187,15 @@ class Net(object):
 
 
 
-"""
-# destructively modifies net to update weights.
-def backpropagateSGD(example, label step, net):
-	def downStreamError(sigmas,weights):
-		# assert len(sigmas) == len(wieghts)
-		errorArray = np.zeros(len(weights[0]))
-		for i, w in enumerate(weights):
-			errorArray = np.add(errorArray, sigmas[i] * w)
-		return errorArray
+	
 
-	net.compute(example);
-	layer = net.outputLayer
 
-	while layer.type != Layer.INPUT:
-		derivative = np.vectorize(layer.neuron.derivative())
-		localDerivative = derivative(layer.cachedOutput)
-		error = np.zeros(len(localDerivative))  
-		if layer.type == Layer.OUTPUT:
-			error = np.subtract(label, layer.cachedOutput)
-		elif layer.type == Layer.HIDDEN:
-			error = downStreamError(layer.downLayer.cachedSigmas, layer.downLayer.weights)
-		layer.cachedSigmas = -1 * np.multiply(error, localDerivative)
-		layer = layer.upLayer
 
-	## UPDATE WEIGHTS
-	layer = net.outputLayer
-	while layer.type != Layer.INPUT:
-		for w in layer.weights:
-			w = w + step * np.multiply(layer.upLayer.cachedOutput, layer.cachedSigmas)
-		layer = layer.upLayer
-"""
+
+
+
+
+
 
 
 
