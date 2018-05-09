@@ -102,6 +102,8 @@ class NNDrawer(object):
 
 			if(curLayer.type != nets.Layer.INPUT and curLayer.type != nets.Layer.OUTPUT):
 				self.buttons.append(DeleteLayer(curLayer, (x0 - self.frame.margin * 10, y)))
+				self.buttons.append(EditNeuron(curLayer, (x + self.frame.margin * 10, y), 1, None))
+				self.buttons.append(EditNeuron(curLayer, (x + self.frame.margin * 13, y), -1, None))
 			if curLayer.type != nets.Layer.INPUT:
 				xm = x0 - self.frame.margin * 10
 				ym = y + layerSpacing // 2
@@ -151,6 +153,17 @@ class AddLayer(DeleteLayer):
 	def onClick(self):
 		layer = nets.Layer(Neurons.Sigmoid, 3, nets.Layer.HIDDEN)
 		nets.NetEditor.spliceIn(layer,self.upLayer, self.downLayer)
+
+class EditNeuron(DeleteLayer):
+	def __init__(self, layer, coord, op, neuron):
+		super().__init__(layer, coord)
+		self.op = op
+		self.neuron = neuron
+
+	def onClick(self):
+		nets.NetEditor.editNode(self.layer, self.op, self.neuron)
+
+
 
 
 
