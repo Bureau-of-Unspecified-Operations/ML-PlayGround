@@ -50,11 +50,19 @@ class Net(object):
 	# 	self.connect(hiddenLayer, self.outputLayer)
 	# 	self.layerCount = 2 + len(args)
 
-	def __init__(self, inputLayer, outputLayer, layerCount, lossDerivative):
+	def __init__(self, inputLayer, outputLayer, lossDerivative):
 		self.inputLayer = inputLayer
 		self.outputLayer = outputLayer
 		self.lossDerivative = lossDerivative
-		self.layerCount = layerCount
+	
+
+	def layerCount(self):
+		cnt = 0
+		layer = self.inputLayer
+		while layer != None:
+			cnt += 1
+			layer = layer.downLayer
+		return cnt
 
 
 	def compute(self, example):
@@ -156,6 +164,7 @@ class NetEditor(object):
 		self.connect(upLayer, layer)
 		self.connect(layer, downLayer);
 
+
 		#not safe for end layers
 	def editNode(layer, op, neuron):
 		layer.nCount += op
@@ -178,8 +187,8 @@ class NetEditor(object):
 			NetEditor.connect(upLayer, hiddenLayer);
 			upLayer = hiddenLayer
 		NetEditor.connect(hiddenLayer, outputLayer)
-		layerCount = 2 + len(args)
-		return Net(inputLayer, outputLayer, layerCount, lossDerivative)
+		
+		return Net(inputLayer, outputLayer, lossDerivative)
 
 
 

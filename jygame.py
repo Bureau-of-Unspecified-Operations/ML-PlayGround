@@ -1,7 +1,19 @@
 import pygame
+import math
+import Colors
 
 
 class util(object):
+	def dist(p0, p1):
+		assert(len(p0) == len(p1))
+		s = 0
+		for i in range(len(p0)):
+			s += (p0[i] - p1[i]) ** 2
+		return math.sqrt(s)
+
+	def inCircleRange(x0, y0, x1, y1, r):
+		return util.dist((x0,y0),(x1,y1)) <= r
+
 	def centerText(font, text, x, y):
 		width, height = font.size(text)
 		x0 = x - width // 2
@@ -54,7 +66,7 @@ class DrawableLine(object):
 		self.end = end
 		self.thickness = thickness;
 		self.color = color
-		
+
 	def draw(self, frame):
 		pygame.draw.line(frame.screen, self.color, self.start, self.end, self.thickness)
 
@@ -72,3 +84,8 @@ class Frame(object):
 		x0 = x - self.x
 		y0 = y - self.y
 		return (x0, y0)
+
+class PlusButton(object):
+	r = 10
+	color = Colors.SILVER
+

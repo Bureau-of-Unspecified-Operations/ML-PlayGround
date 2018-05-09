@@ -12,19 +12,15 @@ class NNDrawer(object):
 
 	def __init__(self, frame):
 		self.frame = frame
-		self.net = nets.NetEditor.newNet(2, 4, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3))
-
+		self.net = nets.NetEditor.newNet(2, 1, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
+		self.buttons = list()
 		self.font = pygame.font.SysFont("monospace", 10)
 
 	def getDrawables(self):
 		shapes = list()
 		shapes.extend(self.drawablesFromNet(self.net))
-
+		shapes.extend(self.buttons)
 		return shapes
-
-
-	
-
 
 
 	def createNeuron(self,circle, neuron, output):
@@ -36,9 +32,9 @@ class NNDrawer(object):
 		return jp.DrawableTextCircle(cx, cy, cr, tx, ty, self.font, text, color)
 
 	def makeLines(self,weights, point, points, r):
-		print("len of weights " + str(len(weights)))
-		print("len of points " + str(len(points)))
-		print(points)
+		# print("len of weights " + str(len(weights)))
+		# print("len of points " + str(len(points)))
+		# print(points)
 		assert(len(weights) == len(points))
 		shapes = list()
 		for i in range(len(weights)):
@@ -48,20 +44,25 @@ class NNDrawer(object):
 		return shapes
 
 
-	def mouseEvent(self, x, y, type):
-		#self.net.compute(example);
+	def mouseEvent(self, x, y, eventType):
+		if eventType == pygame.MOUSEBUTTONDOWN:
+			for button in self.buttons:
+				if button.inRange(x,y):
+					button.onClick()
 		pass
 
 	def quit(self):
 		pass
 
 	def drawablesFromNet(self, net):
+		lc = net.layerCount()
+		del self.buttons[:]
 		shapes = list()
-		neuronCoords = [list() for i in range(net.layerCount)]
+		neuronCoords = [list() for i in range(lc)]
 		r = 30
 		layerindex = 0
 		space = self.frame.height - self.frame.margin * 2 - 4 * r # empty space between input and output layer
-		layerSpacing = (space - net.layerCount * 2 * r) // (net.layerCount + 1) #could be too small and get screwed
+		layerSpacing = (space - lc * 2 * r) // (lc + 1) #could be too small and get screwed
 
 		curLayer = net.inputLayer
 
@@ -73,24 +74,57 @@ class NNDrawer(object):
 				y = self.frame.height - self.frame.margin - r
 			else: y = self.frame.height - (self.frame.margin + r + (layerindex + 1) * (layerSpacing + 2 * r)) #goes from the bottom up
 
+			
+
+
 			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
 			if(neuronSpacing < 2 * r): print("too small")
-
+			x0 = 0
 			xB = 0 - r # makes future spacing consistant
 			for i in range(curLayer.nCount):
-				print("i " + str(i))
-				print("ind " + str(layerindex))
+				# print("i " + str(i))
+				# print("ind " + str(layerindex))
 				x = xB + (1 + i) * (neuronSpacing + 2 * r) 
-				print(neuronCoords)
+				if i == 0: x0 = x
+				#print(neuronCoords)
 				neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
 				#print("neruons at (" + str(x) + "," + str(y) + ")" )
 				shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[i]))
 				if curLayer.upLayer != None:
 					shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
 
+			if(curLayer.type != nets.Layer.INPUT):
+				self.buttons.append(DeleteLayer(curLayer, (x0 - self.frame.margin * 10, y)))
+
 			layerindex += 1
 			curLayer = curLayer.downLayer
+
+
+		# for i,buttonLayer in enumerate(neuronCoords):
+		# 	if
+
 		return shapes
+
+
+
+
+
+class DeleteLayer(object):
+
+	def __init__(self, layer, coord):
+		self.layer = layer
+		(self.x, self.y) = coord
+		self.r = 10
+		self.color = Colors.SILVER
+
+	def draw(self, frame):
+		pygame.draw.circle(frame.screen, self.color, (self.x, self.y), self.r)
+
+	def onClick(self):
+		nets.NetEditor.spliceOut(self.layer)
+
+	def inRange(self, x, y):
+		return jp.util.inCircleRange(x, y, self.x, self.y, self.r)
 
 
 
