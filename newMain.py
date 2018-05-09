@@ -27,19 +27,19 @@ class MachineLearningGameLoop(object):
 		self.frames = self.initFrames(); # might want to be in func init?
 		self.viewModels = list()
 		self.viewModels.append(NND.NNDrawer(self.frames[0]))
+		self.viewModels.append(NND.NNDrawer(self.frames[1]))
 
 
 
 	#basic bitch split it all evenly
 	def initFrames(self):
-		frames = list()
-		cnt = 1  #HACK!!
-		spacing = self.width if cnt == 0 else self.width // cnt
-		for i in range(cnt):
-			print("in range")
-			frame = jp.Frame((i * spacing, 0), spacing, self.height, pygame.Surface((spacing, self.height)))
-			frame.margin = 10
-			frames.append(frame)
+		frames = list()		
+		frame = jp.Frame((0, 0), self.width // 2, self.height)
+		frame.margin = 10
+		frames.append(frame)
+		frame = jp.Frame((self.width // 2, 0), self.width // 2, self.height)
+		frame.margin = 10
+		frames.append(frame)
 		return frames
 
 	def global2Frame(self,x,y):  # dif scope/not in the class?
@@ -80,7 +80,8 @@ class MachineLearningGameLoop(object):
 	def redraw(self):
 		self.screen.fill(Colors.RED)
 		for frame in self.frames:
-			pygame.draw.rect(frame.screen, Colors.GREEN, (frame.x,frame.y,frame.width,frame.height), 0)
+			print(frame)
+			pygame.draw.rect(frame.screen, Colors.GREEN, (0,0,frame.width,frame.height), 0)
 
 		for i in range(len(self.viewModels)):
 			viewModel = self.viewModels[i]

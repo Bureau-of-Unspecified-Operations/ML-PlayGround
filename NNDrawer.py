@@ -12,7 +12,7 @@ class NNDrawer(object):
 
 	def __init__(self, frame):
 		self.frame = frame
-		self.net = nets.NetEditor.newNet(2, 1, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
+		self.net = nets.NetEditor.newNet(100, 10, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
 		self.buttons = list()
 		self.font = pygame.font.SysFont("monospace", 10)
 
@@ -86,15 +86,19 @@ class NNDrawer(object):
 
 
 			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
-			minxSpacing = 200
+			minxSpacing = 100
 			maxNeurons = (self.frame.width - minxSpacing) // (minxSpacing + 2 * r)
+			print("max neuron " + str(maxNeurons))
 			if(neuronSpacing < minxSpacing):
+				x0 = 0
 				xB = 0 - r
 				for i in range(maxNeurons):
 					if i == maxNeurons // 2:
-						pass
+						x = xB + (1 + i) * (minxSpacing + 2 * r)
+						shapes.extend(jp.util.dotdotdot(r//3, x, y, r))
 					else:
 						x = xB + (1 + i) * (minxSpacing + 2 * r)
+						if i == 0: x0 = x
 						j = self.collapsedIndex(curLayer.nCount, maxNeurons, i) 
 						neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
 						shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[j]))

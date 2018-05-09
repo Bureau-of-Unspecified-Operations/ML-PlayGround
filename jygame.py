@@ -45,6 +45,26 @@ class util(object):
 	def rescale(x, lo0, hi0, lo1, hi1):
 		return (x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1) // (hi0 - lo0)
 
+	def dotdotdot(rD, x, y, space):
+		shapes = list()
+		for i in range(3):
+			cx = x - space - 2 * rD + i * (space + 2 * rD)
+			cy = y
+			shapes.append(DrawableCircle(cx, cy, rD, Colors.WHITE))
+		return shapes
+
+
+class DrawableCircle(object):
+	def __init__(self,cx,cy,cr, color):
+		self.cx = cx
+		self.cy = cy
+		self.cr = cr
+		self.color = color
+
+	def draw(self, frame):
+		pygame.draw.circle(frame.screen, self.color, (self.cx, self.cy), self.cr)
+	
+
 class DrawableTextCircle(object):
 	def __init__(self,cx,cy,cr,tx,ty,font,text,color):
 		self.cx = cx
@@ -58,7 +78,7 @@ class DrawableTextCircle(object):
 
 	def draw(self, frame):
 		pygame.draw.circle(frame.screen, self.color, (self.cx, self.cy), self.cr)
-		frame.screen.blit(self.font.render(self.text, True, (0,0,0)), (self.tx, self.ty));
+		frame.screen.blit(self.font.render(self.text, True, Colors.ORANGE), (self.tx, self.ty));
 
 class DrawableLine(object):
 	def __init__(self, start, end, thickness, color):
@@ -71,11 +91,12 @@ class DrawableLine(object):
 		pygame.draw.line(frame.screen, self.color, self.start, self.end, self.thickness)
 
 class Frame(object):
-	def __init__(self, coord, width, height, screen):
+	def __init__(self, coord, width, height):
 		(self.x, self.y) = coord
 		self.width = width
 		self.height = height
-		self.screen = screen
+		self.screen = pygame.Surface((width, height))
+
 
 	def containsCoord(self, x, y):
 		return x >= self.x and x <= self.x + self.width and y >= self.y and y <= self.y + self.height
