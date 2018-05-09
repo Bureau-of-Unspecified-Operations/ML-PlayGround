@@ -95,6 +95,7 @@ class MachineLearningGameLoop(object):
 			frame = self.frames[i]   #INTERSESTING, the frame you pass to the viewmodel does not have to be this same frame.
 			for drawable in viewModel.getDrawables():
 				drawable.draw(frame)
+			
 
 		for frame in self.frames:
 			self.screen.blit(frame.screen, (frame.x, frame.y))

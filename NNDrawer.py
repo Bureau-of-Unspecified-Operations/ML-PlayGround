@@ -4,6 +4,7 @@ import Neurons
 import jygame as jp
 import pygame
 import Colors
+import TrainingViewModel as TVM
 
 
 
@@ -15,8 +16,8 @@ class NNDrawer(object):
 		self.net = nets.NetEditor.newNet(100, 10, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
 		self.buttons = list()
 		self.font = pygame.font.SysFont("monospace", 10)
-		
-		self.popUps = list()
+	
+
 
 	def getDrawables(self):
 		shapes = list()

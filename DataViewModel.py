@@ -11,6 +11,7 @@ class DataView(object):
 		self.buttons = list()
 		self.spacing = 15
 		self.declareButtons()
+		self.popUp = list()
 
 	def declareButtons(self):
 		rect0 = (10, self.spacing * 11 + 10, 90, 20)
