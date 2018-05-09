@@ -4,6 +4,7 @@ import pygame
 import sys
 import NeuralNets as nets
 import Neurons
+import DigitDrawerViewModel as ddvm
 import NNDrawer as NND
 import jygame as jp
 import Colors
@@ -27,7 +28,9 @@ class MachineLearningGameLoop(object):
 		self.frames = self.initFrames(); # might want to be in func init?
 		self.viewModels = list()
 		self.viewModels.append(NND.NNDrawer(self.frames[0]))
-		self.viewModels.append(NND.NNDrawer(self.frames[1]))
+		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[1]))
+		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[1]))
+
 
 
 
@@ -37,7 +40,10 @@ class MachineLearningGameLoop(object):
 		frame = jp.Frame((0, 0), self.width // 2, self.height)
 		frame.margin = 10
 		frames.append(frame)
-		frame = jp.Frame((self.width // 2, 0), self.width // 2, self.height)
+		frame = jp.Frame((self.width // 2, 0), self.width // 2, self.height // 2)
+		frame.margin = 10
+		frames.append(frame)
+		frame = jp.Frame((self.width // 2, self.height // 2), self.width // 2, self.height // 2)
 		frame.margin = 10
 		frames.append(frame)
 		return frames

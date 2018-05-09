@@ -50,14 +50,7 @@ def newSaveData():
 ## UTILITY STUFF
 #################################
 
-def row2Y(row, data):
-	return data.gridCorner[1] + row * data.gridSize
-def col2X(col, data):
-	return data.gridCorner[0] + col * data.gridSize
-def x2Col(x, data):
-	return (x - data.gridCorner[0]) // data.gridSize
-def y2Row(y, data):
-	return (y - data.gridCorner[1]) // data.gridSize
+
 
 
 ################################

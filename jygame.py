@@ -53,11 +53,24 @@ class util(object):
 			shapes.append(DrawableCircle(cx, cy, rD, Colors.WHITE))
 		return shapes
 
+	###########################################3333
+	## GRID STUFF
+	#############################333
+
+	def row2Y(row, size, y0):
+		return y0 + row * size
+	def col2X(col, size, x0):
+		return x0 + col * size
+	def x2Col(x, size, x0):
+		return (x - x0) // size
+	def y2Row(y, size, y0):
+		return (y - y0) // size
+
 	def make2dList(rows, cols):
-	a = []
-	for row in range(rows):
-		a.append([False] * cols);
-	return a
+		a = []
+		for row in range(rows):
+			a.append([False] * cols);
+		return a
 
 	# destructive
 	def fill2dList(l,val):
@@ -65,6 +78,18 @@ class util(object):
 			for col in range(len(l[0])): #bitches!!
 				l[row][col] = val
 
+	def inBounds(row, col, x, y, cellSize, x0, y0):
+		x0 = util.col2X(col, cellSize, x0)
+		y0 = util.row2Y(row, cellSize, y0)
+		return (x0 <= x and x <= x0 + cellSize and
+				y0 <= y and y <= y0 + cellSize)
+
+	#####33333333333###############################3
+
+
+##########################################
+## DRAWABLES
+#######################################
 
 class DrawableCircle(object):
 	def __init__(self,cx,cy,cr, color):
@@ -102,6 +127,30 @@ class DrawableLine(object):
 	def draw(self, frame):
 		pygame.draw.line(frame.screen, self.color, self.start, self.end, self.thickness)
 
+
+
+class DrawableGrid(object):
+	def __init__(self, array, x, y, cellSize):
+		self.grid = array
+		self.cellSize = cellSize
+		self.x = x
+		self.y = y
+
+	def draw(self, frame):
+		for row in range(len(self.grid)):
+			for col in range(len(self.grid[0])):
+				color = Colors.BLACK if (self.grid[row][col] == True) else Colors.WHITE
+				rect = (util.col2X(col, self.cellSize, self.x), util.row2Y(row, self.cellSize, self.y), self.cellSize, self.cellSize)
+				pygame.draw.rect(frame.screen,color, rect,0)
+
+
+class PlusButton(object):
+	r = 10
+	color = Colors.SILVER
+
+
+#################################################33
+
 class Frame(object):
 	def __init__(self, coord, width, height):
 		(self.x, self.y) = coord
@@ -118,11 +167,5 @@ class Frame(object):
 		y0 = y - self.y
 		return (x0, y0)
 
-class DrawableGrid(object):
 
-	def __init__(self, cells, cellWidth,)
-
-class PlusButton(object):
-	r = 10
-	color = Colors.SILVER
 
