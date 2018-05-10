@@ -39,7 +39,7 @@ class TestTrainView(object):
 			drawable = jp.DrawableErrorGrid(self.errorMatrix[0], 10, 100, 40, self.labels)
 			shapes.append(drawable)
 		if self.control["showPred"]:
-			drawable = jp.basicText(self.pred[0], 10, 100, 5) # x y margin
+			drawable = jp.BasicText(self.pred[0], 10, 100, 5) # x y margin
 			shapes.append(drawable)
 		return shapes
 

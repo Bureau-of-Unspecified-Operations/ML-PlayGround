@@ -15,7 +15,7 @@ class NNDrawer(object):
 		self.frame = frame
 		self.net = nets.NetEditor.newNet(100, 10, Neurons.Sigmoid(), nets.Net.leastSquaredDerivative,(Neurons.Sigmoid(), 2))
 		self.buttons = list()
-		self.font = pygame.font.SysFont("arial", 10)
+		self.font = pygame.font.SysFont("arial", 14)
 
 
 
@@ -29,7 +29,7 @@ class NNDrawer(object):
 	def createNeuron(self,circle, neuron, output):
 		rgb = jp.util.rescale(output, neuron.lo, neuron.hi, 0, 255)
 		color = (rgb, rgb, rgb)
-		text = neuron.text
+		text = str(round(output, 2))
 		(cx, cy, cr) = circle
 		(tx, ty) = jp.util.centerText(self.font,text, cx, cy);
 		return jp.DrawableTextCircle(cx, cy, cr, tx, ty, self.font, text, color)
@@ -44,7 +44,7 @@ class NNDrawer(object):
 		for i in range(len(points)):
 			(x1, y1) = point
 			(x2, y2) = points[i]
-			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), 3, Colors.RED))
+			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), jp.util.rescale(weights[i],0,1,1,6), Colors.RED))
 		return shapes
 
 
@@ -185,7 +185,7 @@ class AddLayer(DeleteLayer):
 		self.color = Colors.ORANGE
 
 	def onClick(self):
-		layer = nets.Layer(Neurons.Sigmoid, 3, nets.Layer.HIDDEN)
+		layer = nets.Layer(Neurons.Sigmoid(), 3, nets.Layer.HIDDEN)
 		nets.NetEditor.spliceIn(layer,self.upLayer, self.downLayer)
 
 class EditNeuron(DeleteLayer):

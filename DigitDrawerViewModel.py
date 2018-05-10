@@ -11,11 +11,16 @@ class DigitDrawerVM(object):
 		self.x = 10
 		self.y = 10
 		self.isDrawing = False
-		self.popUps = list()
+		self.buttons = list()
+		self.defineButtons()
+
+	def defineButtons(self):
+		self.buttons.append(jp.GenericRectButton(self.model.clearGrid, "Clear", self.x, self.y + self.cellSize * 10))
 
 	def getDrawables(self):
 		shapes = list()
 		shapes.append(jp.DrawableGrid(self.model.grid, self.x, self.y, self.cellSize))
+		shapes.extend(self.buttons)
 		return shapes
 
 	def colorGrid(self, x, y):
@@ -28,6 +33,9 @@ class DigitDrawerVM(object):
 	def mouseEvent(self, x, y, eventType):
 		if eventType == pygame.MOUSEBUTTONDOWN:
 			self.isDrawing = True
+			for button in self.buttons:
+				if button.inRange(x, y):
+					button.onClick()
 		elif eventType == pygame.MOUSEBUTTONUP:
 			self.isDrawing = False
 			self.model.clearGridChanges()

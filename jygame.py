@@ -52,8 +52,9 @@ class util(object):
 
 
 	#best for scalling up (cause integer division)
+	#lo hi 1 are the target range
 	def rescale(x, lo0, hi0, lo1, hi1):
-		return (x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1) // (hi0 - lo0)
+		return int((x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1) // (hi0 - lo0))
 
 	def dotdotdot(rD, x, y, space):
 		shapes = list()
@@ -105,7 +106,7 @@ class BasicText(object):
 	def __init__(self, text, x, y, margin):
 		self.x = x
 		self.y = y
-		self.text = text
+		self.text = "I think it's a " + str(text)
 		self.margin = margin
 		self.color = Colors.BLACK
 		self.font = pygame.font.SysFont("arial", 10)
@@ -137,7 +138,7 @@ class DrawableTextCircle(object):
 
 	def draw(self, frame):
 		pygame.draw.circle(frame.screen, self.color, (self.cx, self.cy), self.cr)
-		frame.screen.blit(self.font.render(self.text, True, Colors.ORANGE), (self.tx, self.ty));
+		frame.screen.blit(self.font.render(self.text, True, Colors.RED), (self.tx, self.ty));
 
 class DrawableLine(object):
 	def __init__(self, start, end, thickness, color):
@@ -191,7 +192,8 @@ class DrawableErrorGrid(object):
 					color = Colors.GREEN
 				else:
 					color = Colors.RED
-				util.drawTextRect(frame.screen, (self.x, self.y, self.cellSize, self.cellSize), self.font, text, color, Colors.BLACK)
+				print("drawRec " + str(row) + " " + str(col))
+				util.drawTextRect(frame.screen, (x0, y0, self.cellSize, self.cellSize), self.font, text, color, Colors.BLACK)
 
 
 
@@ -209,9 +211,9 @@ class FrequencyTable(object):
 			x = self.x
 			y = self.y + i * self.spacing
 			frame.screen.blit(self.font.render(text, True, Colors.BLACK), (x, y))
-####################3
+####################3#####################
 ## BUTTONS
-####################
+##########################################
 
 class TestButton(object):
 

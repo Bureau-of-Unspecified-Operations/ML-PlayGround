@@ -23,34 +23,16 @@ class Layer(object):
 		self.nCount = nCount
 
 	def compute(self):
-
 		dot = np.dot(self.upLayer.cachedOutput, self.weights)
 		self.cachedOutput = self.neuron.fire(dot)
 		return self.cachedOutput
 
-
 	# weight vectors are NxM, n is cnt in last (# of indexes), M is neurons in cur layer (# of wights)
 	def setWeights(self, n):
-		self.weights = np.zeros(shape=(n, self.nCount))
+		self.weights = np.random.rand(n, self.nCount)
 
 
 class Net(object):
-	# args should be a list of (neuron, nCount) pairs describing the hidden layers you want
-	# def __init__(self, inputSize, outputSize, outputNeuron, lossDerivative, *args):
-	# 	self.inputLayer = Layer(Neurons.Blank, inputSize, Layer.INPUT)
-	# 	self.outputLayer = Layer(outputNeuron, outputSize, Layer.OUTPUT)
-	# 	self.lossDerivative = lossDerivative
-	# 	hiddenLayer = None
-	# 	upLayer = self.inputLayer
-	# 	for i in range(len(args)):
-	# 		print(args[i][0])
-	# 		print(args[i][1])
-	# 		hiddenLayer = Layer(args[i][0],args[i][1], Layer.HIDDEN)
-	# 		self.connect(upLayer, hiddenLayer);
-	# 		upLayer = hiddenLayer
-	# 	self.connect(hiddenLayer, self.outputLayer)
-	# 	self.layerCount = 2 + len(args)
-
 	def __init__(self, inputLayer, outputLayer, lossDerivative):
 		self.inputLayer = inputLayer
 		self.outputLayer = outputLayer
@@ -148,7 +130,7 @@ class Net(object):
 
 	def train(self, trainingData):
 		step = .3
-		maxIter = 1
+		maxIter = 100
 		for t in range(maxIter):
 			for i in range(len(trainingData)):
 				example = trainingData[i][0]

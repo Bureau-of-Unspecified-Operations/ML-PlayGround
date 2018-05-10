@@ -37,22 +37,22 @@ class MachineLearningGameLoop(object):
 
 
 
-	#basic bitch split it all evenly
+	
 	def initFrames(self):
 		frames = list()		
 		frame = jp.Frame((0, 0), 150, self.height)
 		frame.margin = 10
 		frames.append(frame)
 
-		frame = jp.Frame((150, 0), (self.width - 150) // 2, self.height)
+		frame = jp.Frame((150, 0), (self.width - 150 - 450), self.height)
 		frame.margin = 10
 		frames.append(frame)
 
-		frame = jp.Frame(((self.width - 150) // 2 + 150, 0), (self.width - 150) // 2, self.height // 2)
+		frame = jp.Frame((self.width - 450, 0), 450, self.height // 2)
 		frame.margin = 10
 		frames.append(frame)
 
-		frame = jp.Frame(((self.width - 150) // 2 + 150, self.height // 2), (self.width - 150) // 2, self.height // 2)
+		frame = jp.Frame((self.width - 450, self.height // 2), 450, self.height // 2)
 		frame.margin = 10
 		frames.append(frame)
 		return frames
@@ -96,7 +96,7 @@ class MachineLearningGameLoop(object):
 		self.screen.fill(Colors.RED)
 		for frame in self.frames:
 			#print(frame)
-			pygame.draw.rect(frame.screen, Colors.GREEN, (0,0,frame.width,frame.height), 0)
+			pygame.draw.rect(frame.screen, Colors.DEEPSKYBLUE, (0,0,frame.width,frame.height), 0)
 
 		for i in range(len(self.viewModels)):
 			viewModel = self.viewModels[i]
