@@ -13,7 +13,7 @@ class NNDrawer(object):
 
 	def __init__(self, frame):
 		self.frame = frame
-		self.net = nets.NetEditor.newNet(100, 10, Neurons.Sigmoid(), nets.Net.leastSquaredDerivative,(Neurons.Sigmoid(), 2))
+		self.net = nets.NetEditor.newNet(100, 10, Neurons.Softmax(), nets.Net.leastSquaredDerivative,(Neurons.Sigmoid(), 2))
 		self.buttons = list()
 		self.font = pygame.font.SysFont("arial", 14)
 
@@ -44,7 +44,7 @@ class NNDrawer(object):
 		for i in range(len(points)):
 			(x1, y1) = point
 			(x2, y2) = points[i]
-			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), jp.util.rescale(weights[i],0,1,1,6), Colors.RED))
+			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), jp.util.rescale(weights[i],-.5,1,1,6), Colors.RED))
 		return shapes
 
 
@@ -91,7 +91,7 @@ class NNDrawer(object):
 			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
 			#print("ncount post str " + str(curLayer.nCount))
 			#print("neuron  spacing " + str(neuronSpacing))
-			minxSpacing = 100
+			minxSpacing = 70
 			maxNeurons = (self.frame.width - minxSpacing) // (minxSpacing + 2 * r)
 			#print("max neuron " + str(maxNeurons))
 			if(neuronSpacing < minxSpacing):

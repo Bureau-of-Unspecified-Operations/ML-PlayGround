@@ -192,7 +192,7 @@ class DrawableErrorGrid(object):
 					color = Colors.GREEN
 				else:
 					color = Colors.RED
-				print("drawRec " + str(row) + " " + str(col))
+				#print("drawRec " + str(row) + " " + str(col))
 				util.drawTextRect(frame.screen, (x0, y0, self.cellSize, self.cellSize), self.font, text, color, Colors.BLACK)
 
 

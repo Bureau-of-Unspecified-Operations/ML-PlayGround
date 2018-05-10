@@ -27,12 +27,13 @@ class MachineLearningGameLoop(object):
 		print(self.width)
 		print(self.height)
 
+		self.specFrame = None
 		self.frames = self.initFrames(); # might want to be in func init?
 		self.viewModels = list()
-		self.viewModels.append(dvm.DataView(self.frames[0]))
-		self.viewModels.append(NND.NNDrawer(self.frames[1]))
-		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[2]))
-		self.viewModels.append(TTVM.TestTrainView(self.viewModels[1].net, self.viewModels[2].model, self.viewModels[0].model))
+		self.view = dvm.DataView(self.specFrame) # dumb hack
+		self.viewModels.append(NND.NNDrawer(self.frames[0]))
+		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[1]))
+		self.viewModels.append(TTVM.TestTrainView(self.viewModels[0].net, self.viewModels[1].model, self.view.model))
 
 
 
@@ -42,9 +43,9 @@ class MachineLearningGameLoop(object):
 		frames = list()		
 		frame = jp.Frame((0, 0), 150, self.height)
 		frame.margin = 10
-		frames.append(frame)
+		self.specFrame = frame
 
-		frame = jp.Frame((150, 0), (self.width - 150 - 450), self.height)
+		frame = jp.Frame((0, 0), (self.width - 450), self.height)
 		frame.margin = 10
 		frames.append(frame)
 

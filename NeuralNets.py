@@ -29,7 +29,7 @@ class Layer(object):
 
 	# weight vectors are NxM, n is cnt in last (# of indexes), M is neurons in cur layer (# of wights)
 	def setWeights(self, n):
-		self.weights = np.random.rand(n, self.nCount)
+		self.weights = np.full((n, self.nCount), 0.1)
 
 
 class Net(object):
@@ -58,6 +58,7 @@ class Net(object):
 
 	def classify(self, vector):
 		pred = self.compute(vector)
+		print("did a classify")
 		return (np.argmax(pred), None)
 
 
@@ -66,25 +67,27 @@ class Net(object):
 		downLayer.upLayer = upLayer
 		downLayer.setWeights(upLayer.nCount)
 
-	
-
-	def adapter(self, label):
-		arr = np.zeros(10)
-		arr[int(label)] = 1
-		return arr
 
 	def backpropagateSGD(self, example, label, step):
+
 		def downStreamError(sigmas, weights):
 			# the weights for each node "stack" on top of each other
 			# multiplied by the sigma of that node
+			# print("weights")
+			# print(weights)
+			# print("sigms")
+			# print(sigmas)
 			err = np.multiply(weights, sigmas)
-			return np.sum(err, axis=1)			
-		
+			tmp = np.sum(err, axis=1)
+			# print("weights post")
+			# print(err)
+			return 	tmp		
 
 		# propagate example through net
 		self.compute(example)
 		layer = self.outputLayer
 
+		cnt = 0
 		# Caclulate the deltas
 		while layer.type != Layer.INPUT:
 			error = None
@@ -95,29 +98,35 @@ class Net(object):
 			elif layer.type == Layer.HIDDEN:
 				error = downStreamError(layer.downLayer.cachedSigmas,layer.downLayer.weights)
 
+			# print("layer " + str(cnt))
+			# print("error")
+			# print(error)
+			# print("deriv")
+			# print(localDerivative)
+
 			layer.cachedSigmas = np.multiply(error, localDerivative)
+			# print("sigmas ")
+			# print(layer.cachedSigmas)
+			# print("layer done \n")
 			layer = layer.upLayer
+			cnt +=1
 
 		# Update Weights
 		layer = self.outputLayer
 		while layer.type != Layer.INPUT:
-			# print("in weight")
-			# print(type(layer.upLayer.cachedOutput))
-
 			cache = layer.upLayer.cachedOutput
 			transCache = cache.reshape(cache.shape[0],-1) # squash into column vector
 			temp = np.multiply(layer.weights, transCache)  # mult each index (row) by relevant output
 			temp = np.multiply(temp, layer.cachedSigmas) # mult each weight (col) by relevant sigma
-			layer.weights = temp * (-1) * step 
+			layer.weights = layer.weights + temp * (-1) * step 
 			layer = layer.upLayer
 
 
-	def crossEntropy(layer,label):
-		index = -1
-		for i in range(len(label)):
-			if label[i] == 1: index = i 
-		assert(index != -1)
-		return -1 / layer[index]
+	def crossEntropyDerivative(layer,label):
+		index = np.argmax(label)
+		temp = np.zeros(len(layer))
+		temp[index] = -1 / layer[index]
+		return temp
 
 	def leastSquaredDerivative(output, label):
 		assert(len(output) == len(label))
@@ -128,14 +137,43 @@ class Net(object):
 		results = self.compute(example)
 		return np.argmax(results)
 
+	def adapter(self, label):
+		arr = np.zeros(10)
+		arr[int(label)] = 1
+		return arr
+
 	def train(self, trainingData):
-		step = .3
-		maxIter = 100
+		print("trained")
+		step = .01
+		maxIter = 20
 		for t in range(maxIter):
 			for i in range(len(trainingData)):
 				example = trainingData[i][0]
+				#print(example)
 				label = self.adapter(trainingData[i][1])
+				#print(label)
 				self.backpropagateSGD(example, label, step)
+		#self.printSigmas()
+		#self.printWeights()
+
+	def printWeights(self):
+		layer = self.inputLayer
+		cnt = 0
+		while layer != None:
+			print("layer " + str(cnt))
+			print(layer.weights)
+			cnt += 1
+			layer = layer.downLayer
+
+	def printSigmas(self):
+		layer = self.inputLayer
+		cnt = 0
+		while layer != None:
+			print("layer " + str(cnt))
+			print(layer.cachedSigmas)
+			cnt += 1
+			layer = layer.downLayer
+
 
 
 class NetEditor(object):

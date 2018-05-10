@@ -21,7 +21,7 @@ class TestTrainView(object):
 		y2 = 70
 		self.buttons.append(TestSingle(self.model.testOnSingle, "Test on Single", x0, y0, self.control, self.pred))
 		self.buttons.append(CrossVal(self.model.crossWrapper, "CrossVal on Workingset", x1, y1, self.control, self.errorMatrix))
-		self.buttons.append(Train(self.model.testOnSingle, "Train on workingset", x2, y2, self.control))
+		self.buttons.append(Train(self.model.train, "Train on workingset", x2, y2, self.control))
 
 
 	def mouseEvent(self, x, y, eventType):

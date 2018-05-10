@@ -17,6 +17,9 @@ class Sigmoid(object):
 		
 
 class Softmax(object):
+	lo = 0
+	hi = 1
+	text = "SoftMax"
 	def fire(self, netArr):
 		def func(x):
 			return math.exp(x)

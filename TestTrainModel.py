@@ -16,8 +16,8 @@ class TestTrainModel(object):
 
 
 	def train(self):
-		curData = data.workingset
-		algo.train(curData)
+		curData = self.data.workingset
+		self.algo.train(curData)
 		print("finished training")
 
 
