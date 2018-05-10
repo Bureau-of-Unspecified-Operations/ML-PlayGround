@@ -47,14 +47,25 @@ class util(object):
 	# 	(tx, ty) = util.centerTextWithMargin(font, text, x, y, margin)
 	# 	pygame.draw.rect(screen, rColor, rect, 0)
 	# 	screen.blit(font.render(text, True, tColor), (tx, ty))
-
+	def drawGridFromArray(screen, array, x, y, cellSize, n):
+		for i in range(len(array)):
+			row = i // n
+			col = i % n
+			x0 = x + col * cellSize
+			y0 = y + row * cellSize
+			rect = (x0,y0,cellSize,cellSize)
+			color = Colors.BLACK if (array[i] == True) else Colors.WHITE
+			pygame.draw.rect(screen,color, rect,0)
 
 
 
 	#best for scalling up (cause integer division)
 	#lo hi 1 are the target range
 	def rescale(x, lo0, hi0, lo1, hi1):
-		return int((x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1) // (hi0 - lo0))
+		print("scale " + str(x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1))
+		print("hi1 - lo1 " + str(hi1-lo1))
+		print("lo1*hi0 " + str(lo1 * hi0))
+		return int((x - lo0) / (hi0 - lo0) * (hi1 - lo1) + lo1)
 
 	def dotdotdot(rD, x, y, space):
 		shapes = list()
@@ -166,7 +177,16 @@ class DrawableGrid(object):
 				rect = (util.col2X(col, self.cellSize, self.x), util.row2Y(row, self.cellSize, self.y), self.cellSize, self.cellSize)
 				pygame.draw.rect(frame.screen,color, rect,0)
 
+class DrawableGridFromArray(object):
+	def __init__(self, array, x, y, cellSize, n):
+		self.array = array
+		self.cellSize = cellSize
+		self.x = x
+		self.y = y
+		self.n = n
 
+	def draw(self, frame):
+		util.drawGridFromArray(frame.screen, self.array, self.x, self.y, self.cellSize, self.n)
 
 
 

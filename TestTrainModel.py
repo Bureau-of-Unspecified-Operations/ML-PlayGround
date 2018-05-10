@@ -11,7 +11,7 @@ class TestTrainModel(object):
 
 	def testOnSingle(self):
 		vector = self.drawer.getVector()
-		(pred, meta) = self.algo.classify(vector)
+		pred = self.algo.classify(vector)
 		return pred
 
 

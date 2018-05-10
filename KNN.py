@@ -2,10 +2,27 @@ import numpy as np
 import math
 
 
-class KNN(object):
+class KNNModel(object):
 	
 	def __init__(self,k):
 		self.k = k
+		self.data = None
+		self.lastClassified = None
+		self.lastHelpExamples = list()
+		self.lastHelpDistances = list()
+		self.lastHelpLabels = list()
+
+	def incK(self):
+		self.k += 1
+
+	def decK(self):
+		if k > 1:
+			self.k -= 1
+
+	def clearHelpers(self):
+		del self.lastHelpExamples[:]
+		del self.lastHelpDistances[:]
+		del self.lastHelpLabels[:]
 
 	def vote(self, voters):
 		best = None
@@ -24,6 +41,8 @@ class KNN(object):
 					mostVotes = votes[vote]
 		return best
 
+	def train(self, data):
+		self.data = data
 
 	# if d is smaller than a value in nearest, return index to replace
 	# else return -1
@@ -42,24 +61,28 @@ class KNN(object):
 		return math.sqrt(sum0)
 		
 
-	def classify(self, trainingData, example):
+	def classify(self, example):
+		self.lastClassified = example
+		self.clearHelpers()
 		nearest = [-1] * self.k
 		nearestIndexes = [-1] * self.k
-		for i in range(len(trainingData)):
-			point = trainingData[i][0]
+		for i in range(len(self.data)):
+			point = self.data[i][0]
 			d = self.distance(example, point)
 			ind = self.closer(nearest,d)
 			if ind != -1:
 				nearest[ind] = d
 				nearestIndexes[ind] = i
 				
-		voters = [trainingData[i][1] for i in nearestIndexes]
+		voters = [self.data[i][1] for i in nearestIndexes]
 		ans = self.vote(voters)
 		metaData = list()
 	
 		for i in range(len(nearestIndexes)):
-			exampleN = trainingData[nearestIndexes[i]][0]
-			labelN =trainingData[nearestIndexes[i]][1]
+			exampleN = self.data[nearestIndexes[i]][0]
+			labelN = self.data[nearestIndexes[i]][1]
 			distanceN = nearest[i]
-			metaData.append( (exampleN, labelN, distanceN))
-		return ans, metaData
+			self.lastHelpExamples.append(exampleN)
+			self.lastHelpLabels.append(labelN)
+			self.lastHelpDistances.append(distanceN)
+		return ans

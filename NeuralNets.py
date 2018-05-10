@@ -4,9 +4,6 @@ import Neurons
 
 
 
-
-
-
 class Layer(object):
 	HIDDEN = 0
 	INPUT = 1
@@ -59,7 +56,7 @@ class Net(object):
 	def classify(self, vector):
 		pred = self.compute(vector)
 		print("did a classify")
-		return (np.argmax(pred), None)
+		return np.argmax(pred)
 
 
 	def connect(self, upLayer, downLayer):
@@ -177,8 +174,6 @@ class Net(object):
 
 
 class NetEditor(object):
-
-	
 
 	def connect(upLayer, downLayer):
 		upLayer.downLayer = downLayer

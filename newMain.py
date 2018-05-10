@@ -10,6 +10,7 @@ import TrainingViewModel as TTVM
 import NNDrawer as NND
 import jygame as jp
 import Colors
+import KNNViewModel as KNNView
 
 
 
@@ -30,10 +31,10 @@ class MachineLearningGameLoop(object):
 		self.specFrame = None
 		self.frames = self.initFrames(); # might want to be in func init?
 		self.viewModels = list()
-		self.view = dvm.DataView(self.specFrame) # dumb hack
-		self.viewModels.append(NND.NNDrawer(self.frames[0]))
-		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[1]))
-		self.viewModels.append(TTVM.TestTrainView(self.viewModels[0].net, self.viewModels[1].model, self.view.model))
+		self.viewModels.append(dvm.DataView(self.frames[0])) # dumb hack
+		self.viewModels.append(KNNView.KNNView(self.frames[1]))
+		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[2]))
+		self.viewModels.append(TTVM.TestTrainView(self.viewModels[1].model, self.viewModels[2].model, self.viewModels[0].model))
 
 
 
@@ -43,9 +44,9 @@ class MachineLearningGameLoop(object):
 		frames = list()		
 		frame = jp.Frame((0, 0), 150, self.height)
 		frame.margin = 10
-		self.specFrame = frame
+		frames.append(frame)
 
-		frame = jp.Frame((0, 0), (self.width - 450), self.height)
+		frame = jp.Frame((150, 0), (self.width - 450 - 150), self.height)
 		frame.margin = 10
 		frames.append(frame)
 
