@@ -6,6 +6,7 @@ import NeuralNets as nets
 import Neurons
 import DigitDrawerViewModel as ddvm
 import DataViewModel as dvm
+import TrainingViewModel as TTVM
 import NNDrawer as NND
 import jygame as jp
 import Colors
@@ -31,6 +32,7 @@ class MachineLearningGameLoop(object):
 		self.viewModels.append(dvm.DataView(self.frames[0]))
 		self.viewModels.append(NND.NNDrawer(self.frames[1]))
 		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[2]))
+		self.viewModels.append(TTVM.TestTrainView(self.viewModels[1].net, self.viewModels[2].model, self.viewModels[0].model))
 
 
 
@@ -41,10 +43,16 @@ class MachineLearningGameLoop(object):
 		frame = jp.Frame((0, 0), 150, self.height)
 		frame.margin = 10
 		frames.append(frame)
+
 		frame = jp.Frame((150, 0), (self.width - 150) // 2, self.height)
 		frame.margin = 10
 		frames.append(frame)
-		frame = jp.Frame(((self.width - 150) // 2 + 150, 0), (self.width - 150) // 2, self.height)
+
+		frame = jp.Frame(((self.width - 150) // 2 + 150, 0), (self.width - 150) // 2, self.height // 2)
+		frame.margin = 10
+		frames.append(frame)
+
+		frame = jp.Frame(((self.width - 150) // 2 + 150, self.height // 2), (self.width - 150) // 2, self.height // 2)
 		frame.margin = 10
 		frames.append(frame)
 		return frames
@@ -95,7 +103,7 @@ class MachineLearningGameLoop(object):
 			frame = self.frames[i]   #INTERSESTING, the frame you pass to the viewmodel does not have to be this same frame.
 			for drawable in viewModel.getDrawables():
 				drawable.draw(frame)
-			
+
 
 		for frame in self.frames:
 			self.screen.blit(frame.screen, (frame.x, frame.y))

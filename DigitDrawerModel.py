@@ -1,4 +1,5 @@
 import jygame as jp
+import numpy as np
 
 
 class DigitDrawer(object):
@@ -26,3 +27,12 @@ class DigitDrawer(object):
 		for row in range(len(self.gridChanged)):
 			for col in range(len(self.gridChanged[0])):
 				self.gridChanged[row][col] = False
+
+	def getVector(self):
+		vector = np.zeros(100)
+		for row in range(len(self.grid)):
+			for col in range(len(self.grid[0])):
+				x = 0 if self.grid[row][col] == False else 1
+				i = row * 10 + col
+				vector[i] = x
+		return vector

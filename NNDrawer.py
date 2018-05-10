@@ -13,10 +13,10 @@ class NNDrawer(object):
 
 	def __init__(self, frame):
 		self.frame = frame
-		self.net = nets.NetEditor.newNet(100, 10, Neurons.Sigmoid, nets.Net.leastSquaredDerivative, (Neurons.Sigmoid, 3),(Neurons.Sigmoid, 3))
+		self.net = nets.NetEditor.newNet(100, 10, Neurons.Sigmoid(), nets.Net.leastSquaredDerivative,(Neurons.Sigmoid(), 2))
 		self.buttons = list()
-		self.font = pygame.font.SysFont("monospace", 10)
-	
+		self.font = pygame.font.SysFont("arial", 10)
+
 
 
 	def getDrawables(self):
@@ -87,8 +87,10 @@ class NNDrawer(object):
 
 			
 
-
+			#print("ncount str " + str(curLayer.nCount))
 			neuronSpacing = (self.frame.width - curLayer.nCount * 2 * r) // (curLayer.nCount + 1)
+			#print("ncount post str " + str(curLayer.nCount))
+			#print("neuron  spacing " + str(neuronSpacing))
 			minxSpacing = 100
 			maxNeurons = (self.frame.width - minxSpacing) // (minxSpacing + 2 * r)
 			#print("max neuron " + str(maxNeurons))
@@ -103,10 +105,15 @@ class NNDrawer(object):
 						x = xB + (1 + i) * (minxSpacing + 2 * r)
 						if i == 0: x0 = x
 						j = self.collapsedIndex(curLayer.nCount, maxNeurons, i) 
+						# print("i " + str(i))
+						# print("j " + str(j))
+						# print("index " + str(layerindex))
+						# print(curLayer.weights)
 						neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
 						shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[j]))
 						if curLayer.upLayer != None:
-							shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
+
+							shapes.extend(self.makeLines(curLayer.weights[:,i], (x,y), neuronCoords[layerindex - 1], r))
 			else:
 				x0 = 0
 				xB = 0 - r # makes future spacing consistant
@@ -119,7 +126,7 @@ class NNDrawer(object):
 					neuronCoords[layerindex].append((x,y)) # picture this as upside down!!
 					shapes.append(self.createNeuron((x,y,r), curLayer.neuron, curLayer.cachedOutput[i]))
 					if curLayer.upLayer != None:
-						shapes.extend(self.makeLines(curLayer.weights[i],(x,y),neuronCoords[layerindex - 1],r))
+						shapes.extend(self.makeLines(curLayer.weights[:,i],(x,y),neuronCoords[layerindex - 1],r))
 
 			if(curLayer.type != nets.Layer.INPUT and curLayer.type != nets.Layer.OUTPUT):
 				self.buttons.append(DeleteLayer(curLayer, (x0 - self.frame.margin * 10, y)))

@@ -23,14 +23,15 @@ class Layer(object):
 		self.nCount = nCount
 
 	def compute(self):
-		nets = list()
-		for w in self.weights:
-			nets.append(np.dot(w, self.upLayer.cachedOutput))
-		self.cachedOutput = self.neuron.fire(np.array(nets))
+
+		dot = np.dot(self.upLayer.cachedOutput, self.weights)
+		self.cachedOutput = self.neuron.fire(dot)
 		return self.cachedOutput
 
+
+	# weight vectors are NxM, n is cnt in last (# of indexes), M is neurons in cur layer (# of wights)
 	def setWeights(self, n):
-		self.weights = [np.zeros(n)] * self.nCount  #make all array for effic
+		self.weights = np.zeros(shape=(n, self.nCount))
 
 
 class Net(object):
@@ -66,12 +67,16 @@ class Net(object):
 
 
 	def compute(self, example):
-		self.inputLayer.cachedOutput = example
+		self.inputLayer.cachedOutput = np.array(example)
 		layer = self.inputLayer.downLayer # handles how input works
 		while(layer.type != Layer.OUTPUT):
 			layer.compute()
 			layer = layer.downLayer
 		return layer.compute()
+
+	def classify(self, vector):
+		pred = self.compute(vector)
+		return (np.argmax(pred), None)
 
 
 	def connect(self, upLayer, downLayer):
@@ -81,21 +86,18 @@ class Net(object):
 
 	
 
-	def train(self, data, labels):
-		# assert len(data) == len(labels)
-		for i in range(len(data)):
-			backpropagateSGD(data[i],labels[i], self.step, self)
+	def adapter(self, label):
+		arr = np.zeros(10)
+		arr[int(label)] = 1
+		return arr
 
 	def backpropagateSGD(self, example, label, step):
 		def downStreamError(sigmas, weights):
-			## assert len(sigmas) == len(weights)
-			# COULD ELIMINATE FOR LOOP?
-			errorArr = np.zeros(len(weights))
-			for i, w in enumerate(weights):
-				# the weights for each node "stack" on top of each other
-				# multiplied by the sigma of that node
-				errorArr = np.add(errorArr, sigmas[i] * w)
-			return errorArr
+			# the weights for each node "stack" on top of each other
+			# multiplied by the sigma of that node
+			err = np.multiply(weights, sigmas)
+			return np.sum(err, axis=1)			
+		
 
 		# propagate example through net
 		self.compute(example)
@@ -117,8 +119,14 @@ class Net(object):
 		# Update Weights
 		layer = self.outputLayer
 		while layer.type != Layer.INPUT:
-			for i, w in enumerate(layer.weights):
-				w = w + (-1) * step * layer.upLayer.cachedOutput * layer.cachedSigmas[i]
+			# print("in weight")
+			# print(type(layer.upLayer.cachedOutput))
+
+			cache = layer.upLayer.cachedOutput
+			transCache = cache.reshape(cache.shape[0],-1) # squash into column vector
+			temp = np.multiply(layer.weights, transCache)  # mult each index (row) by relevant output
+			temp = np.multiply(temp, layer.cachedSigmas) # mult each weight (col) by relevant sigma
+			layer.weights = temp * (-1) * step 
 			layer = layer.upLayer
 
 
@@ -138,12 +146,14 @@ class Net(object):
 		results = self.compute(example)
 		return np.argmax(results)
 
-	def train(self, data, labels):
+	def train(self, trainingData):
 		step = .3
 		maxIter = 1
 		for t in range(maxIter):
-			for i, example in enumerate(data):
-				self.backpropagateSGD(example, labels[i], step)
+			for i in range(len(trainingData)):
+				example = trainingData[i][0]
+				label = self.adapter(trainingData[i][1])
+				self.backpropagateSGD(example, label, step)
 
 
 class NetEditor(object):

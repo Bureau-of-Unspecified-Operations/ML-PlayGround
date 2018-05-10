@@ -14,10 +14,10 @@ class DataView(object):
 		self.popUp = list()
 
 	def declareButtons(self):
-		rect0 = (10, self.spacing * 11 + 10, 90, 20)
-		rect1 = (10, self.spacing * 11 + 30 + 10, 90, 20)
-		self.buttons.append(jp.GenericRectButton(self.model.clearWorkingset, "Clear Working Set", rect0))
-		self.buttons.append(jp.GenericRectButton(self.model.addAll2Workingset, "add all data to Working Set", rect1))
+		x0, y0 = 10, self.spacing * 11 + 10
+		x1, y1 = 10, self.spacing * 11 + 30 + 10
+		self.buttons.append(jp.GenericRectButton(self.model.clearWorkingset, "Clear Working Set", x0, y0))
+		self.buttons.append(jp.GenericRectButton(self.model.addAll2Workingset, "add all data to Working Set", x1, y1))
 
 	def getDrawables(self):
 		shapes = list()
