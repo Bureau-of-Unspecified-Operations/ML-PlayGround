@@ -6,12 +6,9 @@ class Sigmoid(object):
 	hi = 1
 	text = "Sig"
 	def fire(self, netArr):
-		def func(x):
-			return 1 / (1 + math.exp(-x))
-		vectorized = np.vectorize(func)
-		tmp = vectorized(netArr)
-		assert(tmp is not netArr)
-		return tmp
+		netArr = np.clip(netArr, -500, 500)
+		netArr = 1.0 / (1.0 + np.exp(netArr))
+		return netArr
 
 	def derivative(self, netArr, label):
 		return np.multiply(netArr, 1 - netArr)

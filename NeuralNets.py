@@ -133,6 +133,8 @@ class Net(object):
 
 	def crossEntropyDerivative(layer,label):
 		index = np.argmax(label)
+		print("label")
+		print(label)
 		temp = np.zeros(len(layer))
 		temp[index] = -1 / layer[index]
 		return temp
@@ -153,10 +155,10 @@ class Net(object):
 
 	def train(self, trainingData):
 		print("trained")
-		step = .08
-		maxIter = 20
+		step = .04
+		maxIter = 1
 		for t in range(maxIter):
-			for i in range(1):
+			for i in range(len(trainingData)):
 				example = trainingData[i][0]
 				#print(example)
 				label = self.adapter(trainingData[i][1])

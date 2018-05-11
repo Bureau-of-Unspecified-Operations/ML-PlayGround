@@ -9,6 +9,7 @@ class TestTrainModel(object):
 		self.drawer = drawer
 		self.data = data
 
+
 	def testOnSingle(self):
 		vector = self.drawer.getVector()
 		pred = self.getAlgo().classify(vector)
@@ -17,7 +18,8 @@ class TestTrainModel(object):
 
 	def train(self):
 		curData = self.data.workingset
-		self.getAlgo().train(curData)
+		if curData is not None: self.getAlgo().train(curData)
+
 		print("finished training")
 
 

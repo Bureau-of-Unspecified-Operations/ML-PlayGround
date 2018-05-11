@@ -16,7 +16,7 @@ class KNNModel(object):
 		self.k += 1
 
 	def decK(self):
-		if k > 1:
+		if self.k > 1:
 			self.k -= 1
 
 	def clearHelpers(self):

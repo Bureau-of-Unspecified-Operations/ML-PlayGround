@@ -22,7 +22,7 @@ class KNNView(object):
 
 	def declareButtons(self):
 		self.buttons.append(jp.GenericRectButton(self.model.incK, "+", 10, 10))
-		self.buttons.append(jp.GenericRectButton(self.model.decK, "-", 30, 30))
+		self.buttons.append(jp.GenericRectButton(self.model.decK, "-", 40, 10))
 
 	def quit(self):
 		pass
@@ -36,6 +36,8 @@ class KNNView(object):
 	def drawablesFromKNN(self):
 		shapes = list()
 		x, y = self.cx - self.mainCellSize // 2, self.cy - self.mainCellSize // 2
+
+		shapes.append(jp.BasicText("k = " + str(self.model.k), 70,10, 3))
 		
 		if(self.model.lastClassified is not None):
 			shapes.append(jp.DrawableGridFromArray(self.model.lastClassified, x, y, self.mainCellSize, 10))
