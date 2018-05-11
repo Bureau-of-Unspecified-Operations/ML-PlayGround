@@ -3,8 +3,8 @@ import jygame as jp
 import pygame
 
 class TestTrainView(object):
-	def __init__(self, algo, drawer, data):
-		self.model = TTM.TestTrainModel(algo, drawer, data)
+	def __init__(self, getAlgo, drawer, data):
+		self.model = TTM.TestTrainModel(getAlgo, drawer, data)
 		self.buttons = list()
 		self.errorMatrix = list()
 		self.pred = list()
@@ -39,7 +39,7 @@ class TestTrainView(object):
 			drawable = jp.DrawableErrorGrid(self.errorMatrix[0], 10, 100, 40, self.labels)
 			shapes.append(drawable)
 		if self.control["showPred"]:
-			drawable = jp.BasicText(self.pred[0], 10, 100, 5) # x y margin
+			drawable = jp.BasicText("I think it's a ... " + str(self.pred[0]), 10, 100, 5) # x y margin
 			shapes.append(drawable)
 		return shapes
 

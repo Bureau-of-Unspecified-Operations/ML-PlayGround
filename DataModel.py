@@ -17,13 +17,13 @@ class DataModel(object):
 			assert(1 == 2)
 			self.dataset = [(datas[i], labels[i]) for i in range(len(datas))]
 
-		self.workingset = self.dataset
+		self.workingset = self.dataset[:]
 
 	def clearWorkingset(self):
 		self.workingset = list()
 
 	def addAll2Workingset(self):
-		self.workingset = self.dataset
+		self.workingset = self.dataset[:]
 
 	def getFrequencyTable(self):
 		datadict = dict()
@@ -56,6 +56,11 @@ class DataModel(object):
 	def getWorkingset(self):
 		return self.workingset
 
+	def add(self, vector, label):
+		self.workingset.append((vector, label))
+		self.dataset.append((vector, label))
+
 
 	def save(self):
+		#self.dataset = self.dataset[:len(self.dataset) - 5]
 		pickle.dump(self.dataset,open(self.filePath, "wb"))

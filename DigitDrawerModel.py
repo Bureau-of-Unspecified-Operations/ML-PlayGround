@@ -4,11 +4,12 @@ import numpy as np
 
 class DigitDrawer(object):
 
-	def __init__(self, n):
+	def __init__(self, n, dataModel):
 		self.grid = jp.util.make2dList(n, n)
 		jp.util.fill2dList(self.grid, False)
 		self.gridChanged = jp.util.make2dList(n, n)
 		jp.util.fill2dList(self.gridChanged, False)
+		self.dataModel = dataModel
 		
 
 	def clearGrid(self):
@@ -37,3 +38,8 @@ class DigitDrawer(object):
 				i = row * 10 + col
 				vector[i] = x
 		return vector
+
+	def add2Data(self, label):
+		vector = self.getVector()
+		self.dataModel.add(vector, label)
+		self.clearGrid()

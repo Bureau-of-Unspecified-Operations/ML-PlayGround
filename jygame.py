@@ -62,9 +62,6 @@ class util(object):
 	#best for scalling up (cause integer division)
 	#lo hi 1 are the target range
 	def rescale(x, lo0, hi0, lo1, hi1):
-		print("scale " + str(x * (hi1-lo1) - lo1 * hi0 - lo0 * hi1))
-		print("hi1 - lo1 " + str(hi1-lo1))
-		print("lo1*hi0 " + str(lo1 * hi0))
 		return int((x - lo0) / (hi0 - lo0) * (hi1 - lo1) + lo1)
 
 	def dotdotdot(rD, x, y, space):
@@ -117,7 +114,7 @@ class BasicText(object):
 	def __init__(self, text, x, y, margin):
 		self.x = x
 		self.y = y
-		self.text = "I think it's a " + str(text)
+		self.text = text
 		self.margin = margin
 		self.color = Colors.BLACK
 		self.font = pygame.font.SysFont("arial", 10)

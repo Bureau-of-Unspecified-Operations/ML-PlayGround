@@ -13,7 +13,7 @@ class NNDrawer(object):
 
 	def __init__(self, frame):
 		self.frame = frame
-		self.net = nets.NetEditor.newNet(100, 10, Neurons.Softmax(), nets.Net.leastSquaredDerivative,(Neurons.Sigmoid(), 2))
+		self.model = nets.NetEditor.newNet(100, 10, Neurons.Softmax(), nets.Net.leastSquaredDerivative,(Neurons.Sigmoid(), 2))
 		self.buttons = list()
 		self.font = pygame.font.SysFont("arial", 14)
 
@@ -21,7 +21,7 @@ class NNDrawer(object):
 
 	def getDrawables(self):
 		shapes = list()
-		shapes.extend(self.drawablesFromNet(self.net))
+		shapes.extend(self.drawablesFromNet(self.model))
 		shapes.extend(self.buttons)
 		return shapes
 

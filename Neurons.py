@@ -9,7 +9,9 @@ class Sigmoid(object):
 		def func(x):
 			return 1 / (1 + math.exp(-x))
 		vectorized = np.vectorize(func)
-		return vectorized(netArr)
+		tmp = vectorized(netArr)
+		assert(tmp is not netArr)
+		return tmp
 
 	def derivative(self, netArr, label):
 		return np.multiply(netArr, 1 - netArr)

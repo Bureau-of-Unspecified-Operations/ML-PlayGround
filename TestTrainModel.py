@@ -5,19 +5,19 @@ import numpy as np
 class TestTrainModel(object):
 
 	def __init__(self, algo, drawer, data):
-		self.algo = algo
+		self.getAlgo = algo
 		self.drawer = drawer
 		self.data = data
 
 	def testOnSingle(self):
 		vector = self.drawer.getVector()
-		pred = self.algo.classify(vector)
+		pred = self.getAlgo().classify(vector)
 		return pred
 
 
 	def train(self):
 		curData = self.data.workingset
-		self.algo.train(curData)
+		self.getAlgo().train(curData)
 		print("finished training")
 
 
@@ -50,8 +50,8 @@ class TestTrainModel(object):
 		predMatrix = np.zeros((10,10))		
 		for point in testData:
 			(example, label) = point
-			self.algo.train(trainingData)
-			(ans, metaData) = self.algo.classify(example)
+			self.getAlgo().train(trainingData)
+			ans = self.getAlgo().classify(example)
 			predMatrix[label][ans] += 1
 		return predMatrix
 

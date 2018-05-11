@@ -13,6 +13,31 @@ import Colors
 import KNNViewModel as KNNView
 
 
+class Controler(object):
+	def __init__(self, views, classes):
+		self.mainView = views
+		self.classes = classes
+		self.index = 0
+		self.buttons = [jp.GenericRectButton(self.inc, "Change Algorithim", 10, 10)]
+
+	def inc(self):
+		self.index = (self.index + 1) % len(self.classes);
+		self.mainView[1] = self.classes[self.index]
+
+	def getDrawables(self):
+		shapes = list()
+		shapes.extend(self.buttons)
+		return shapes
+
+	def quit(self):
+		pass
+
+	def mouseEvent(self, x, y, eventType):
+		if eventType == pygame.MOUSEBUTTONDOWN:
+			for button in self.buttons:
+				if button.inRange(x,y):
+					button.onClick()
+		pass
 
 
 class MachineLearningGameLoop(object):
@@ -30,31 +55,38 @@ class MachineLearningGameLoop(object):
 
 		self.specFrame = None
 		self.frames = self.initFrames(); # might want to be in func init?
+
 		self.viewModels = list()
 		self.viewModels.append(dvm.DataView(self.frames[0])) # dumb hack
 		self.viewModels.append(KNNView.KNNView(self.frames[1]))
-		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[2]))
-		self.viewModels.append(TTVM.TestTrainView(self.viewModels[1].model, self.viewModels[2].model, self.viewModels[0].model))
+		self.viewModels.append(ddvm.DigitDrawerVM(self.frames[2], self.viewModels[0].model))
+		self.viewModels.append(TTVM.TestTrainView(self.getCurAlgo, self.viewModels[2].model, self.viewModels[0].model))
+		self.viewModels.append(Controler(self.viewModels, (self.viewModels[1], NND.NNDrawer(self.frames[1]))))
 
-
+	def getCurAlgo(self):
+		return self.viewModels[1].model
 
 
 	
 	def initFrames(self):
 		frames = list()		
-		frame = jp.Frame((0, 0), 150, self.height)
+		frame = jp.Frame((0, 0), 150, self.height // 2)
 		frame.margin = 10
 		frames.append(frame)
 
-		frame = jp.Frame((150, 0), (self.width - 450 - 150), self.height)
+		frame = jp.Frame((150, 0), (self.width - 500 - 150), self.height)
 		frame.margin = 10
 		frames.append(frame)
 
-		frame = jp.Frame((self.width - 450, 0), 450, self.height // 2)
+		frame = jp.Frame((self.width - 500, 0), 500, self.height // 2)
 		frame.margin = 10
 		frames.append(frame)
 
-		frame = jp.Frame((self.width - 450, self.height // 2), 450, self.height // 2)
+		frame = jp.Frame((self.width - 500, self.height // 2), 500, self.height // 2)
+		frame.margin = 10
+		frames.append(frame)
+
+		frame = jp.Frame((0, self.height // 2), 150, self.height // 2)
 		frame.margin = 10
 		frames.append(frame)
 		return frames

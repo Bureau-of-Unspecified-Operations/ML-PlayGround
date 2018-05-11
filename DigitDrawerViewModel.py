@@ -4,23 +4,30 @@ import pygame
 
 class DigitDrawerVM(object):
 
-	def __init__(self, frame):
-		self.model = ddm.DigitDrawer(10)
+	def __init__(self, frame, dataModel):
+		self.model = ddm.DigitDrawer(10, dataModel)
 		self.cellSize = 40
 		self.frame = frame
-		self.x = 10
+		self.x = 30
 		self.y = 10
 		self.isDrawing = False
 		self.buttons = list()
 		self.defineButtons()
+		
 
 	def defineButtons(self):
 		self.buttons.append(jp.GenericRectButton(self.model.clearGrid, "Clear", self.x, self.y + self.cellSize * 10))
+		step = 20
+		for i in range(10):
+			x = 0
+			y = self.y + i * step
+			self.buttons.append(LabelButton(self.model.add2Data, str(i), x, y))
 
 	def getDrawables(self):
 		shapes = list()
 		shapes.append(jp.DrawableGrid(self.model.grid, self.x, self.y, self.cellSize))
 		shapes.extend(self.buttons)
+		shapes.append(jp.BasicText("Label me please!!", self.x + 60, self.y + self.cellSize * 10, 3))
 		return shapes
 
 	def colorGrid(self, x, y):
@@ -46,3 +53,7 @@ class DigitDrawerVM(object):
 		
 	def quit(self):
 		pass
+
+class LabelButton(jp.GenericRectButton):
+	def onClick(self):
+		self.function(int(self.text))

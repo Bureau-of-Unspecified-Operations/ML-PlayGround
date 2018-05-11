@@ -20,6 +20,9 @@ class Layer(object):
 		self.nCount = nCount
 
 	def compute(self):
+		print(type(self))
+		print(type(self.upLayer.cachedOutput))
+		print(type(self.weights))
 		dot = np.dot(self.upLayer.cachedOutput, self.weights)
 		self.cachedOutput = self.neuron.fire(dot)
 		return self.cachedOutput
