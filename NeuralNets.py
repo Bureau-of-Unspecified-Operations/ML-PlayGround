@@ -55,7 +55,6 @@ class Net(object):
 
 	def classify(self, vector):
 		pred = self.compute(vector)
-		# print("did a classify")
 		return np.argmax(pred)
 
 
@@ -133,8 +132,6 @@ class Net(object):
 
 	def crossEntropyDerivative(layer,label):
 		index = np.argmax(label)
-		print("label")
-		print(label)
 		temp = np.zeros(len(layer))
 		temp[index] = -1 / layer[index]
 		return temp
@@ -154,9 +151,8 @@ class Net(object):
 		return arr
 
 	def train(self, trainingData):
-		print("trained")
 		step = .04
-		maxIter = 1
+		maxIter = 50
 		for t in range(maxIter):
 			for i in range(len(trainingData)):
 				example = trainingData[i][0]

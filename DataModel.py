@@ -11,7 +11,6 @@ class DataModel(object):
 	def __init__(self):
 		dataFile = Path(self.filePath)
 		if dataFile.is_file():
-			print("loaded succesfully")
 			self.dataset = pickle.load(open(self.filePath, "rb"))
 		else:
 			assert(1 == 2)

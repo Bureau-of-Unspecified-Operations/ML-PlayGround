@@ -13,7 +13,6 @@ class DigitDrawer(object):
 		
 
 	def clearGrid(self):
-		print("cleared")
 		for row in range(len(self.grid)):
 			for col in range(len(self.grid[0])):
 				self.grid[row][col] = False

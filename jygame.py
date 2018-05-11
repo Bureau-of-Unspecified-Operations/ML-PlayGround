@@ -41,6 +41,11 @@ class util(object):
 		(tx, ty) = util.centerText(font, text, cx, cy)
 		screen.blit(font.render(text, True, tColor), (tx, ty))
 
+	def drawTextCircle(screen, cx, cy, cr, font, text, sColor, tColor):
+		(tx, ty) = util.centerText(font, text, cx, cy)
+		pygame.draw.circle(screen, sColor, (cx, cy), cr)
+		screen.blit(font.render(text, True, tColor), (tx, ty));
+
 	# def drawTextRectFont(screen, font, text, x, y, margin, rColor, tColor):
 	# 	(twidth, theight) = font.size(text)
 	# 	rect = (x, y, 2 * margin + twidth, 2 * margin + theight)
@@ -111,13 +116,13 @@ class util(object):
 #######################################
 
 class BasicText(object):
-	def __init__(self, text, x, y, margin):
+	def __init__(self, text, x, y, margin, fSize):
 		self.x = x
 		self.y = y
 		self.text = text
 		self.margin = margin
 		self.color = Colors.BLACK
-		self.font = pygame.font.SysFont("arial", 10)
+		self.font = pygame.font.SysFont("arial", fSize)
 
 	def draw(self, frame):
 		frame.screen.blit(self.font.render(self.text, True, self.color), (self.x + self.margin, self.y + self.margin))
@@ -147,6 +152,22 @@ class DrawableTextCircle(object):
 	def draw(self, frame):
 		pygame.draw.circle(frame.screen, self.color, (self.cx, self.cy), self.cr)
 		frame.screen.blit(self.font.render(self.text, True, Colors.RED), (self.tx, self.ty));
+
+
+
+class DrawableTextRect(object):
+	def __init__(self, text, cx, cy, margin, rColor, tColor, fSize):
+		self.rColor = rColor
+		self.tColor = tColor
+		self.margin = margin
+		self.text = text
+		self.font = pygame.font.SysFont("arial", fSize)
+		self.rect = util.getRectFromText(self.font, text, cx, cy, margin)
+
+	def draw(self, frame):
+		util.drawTextRect(frame.screen, self.rect, self.font, self.text, self.rColor, self.tColor)
+
+
 
 class DrawableLine(object):
 	def __init__(self, start, end, thickness, color):
@@ -249,7 +270,7 @@ class GenericRectButton(object):
 		self.text = text
 		self.color = Colors.SILVER
 		self.tColor = Colors.ORANGE
-		self.font = pygame.font.SysFont("arial", 10)
+		self.font = pygame.font.SysFont("arial", 16)
 		self.margin = 5
 		self.rect = util.getRectFromText(self.font, text, x, y, self.margin)
 		(self.tx, self.ty) = util.centerText(self.font, self.text, x + self.rect[2] // 2, y + self.rect[3] // 2) 

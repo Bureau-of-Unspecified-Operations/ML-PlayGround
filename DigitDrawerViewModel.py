@@ -27,7 +27,7 @@ class DigitDrawerVM(object):
 		shapes = list()
 		shapes.append(jp.DrawableGrid(self.model.grid, self.x, self.y, self.cellSize))
 		shapes.extend(self.buttons)
-		shapes.append(jp.BasicText("Label me please!!", self.x + 60, self.y + self.cellSize * 10, 3))
+		shapes.append(jp.BasicText("Label me please!!", self.x + 60, self.y + self.cellSize * 10, 3, 15))
 		return shapes
 
 	def colorGrid(self, x, y):

@@ -39,7 +39,7 @@ class TestTrainView(object):
 			drawable = jp.DrawableErrorGrid(self.errorMatrix[0], 10, 100, 40, self.labels)
 			shapes.append(drawable)
 		if self.control["showPred"]:
-			drawable = jp.BasicText("I think it's a ... " + str(self.pred[0]), 10, 100, 5) # x y margin
+			drawable = jp.BasicText("I think it's a ... " + str(self.pred[0]), 10, 100, 5, 20) # x y margin
 			shapes.append(drawable)
 		return shapes
 
@@ -54,12 +54,12 @@ class CrossVal(jp.GenericRectButton):
 		self.matrixList = matrixList
 
 	def onClick(self):
-		print("in here")
 		(err, preMatrix) = self.function()
-		self.control["showError"] = True
-		self.control["showPred"] = False
-		del self.matrixList[:]
-		self.matrixList.append(preMatrix)
+		if err != -1:
+			self.control["showError"] = True
+			self.control["showPred"] = False
+			del self.matrixList[:]
+			self.matrixList.append(preMatrix)
 
 
 

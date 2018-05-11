@@ -129,11 +129,11 @@ class NNDrawer(object):
 						shapes.extend(self.makeLines(curLayer.weights[:,i],(x,y),neuronCoords[layerindex - 1],r))
 
 			if(curLayer.type != nets.Layer.INPUT and curLayer.type != nets.Layer.OUTPUT):
-				self.buttons.append(DeleteLayer(curLayer, (x0 - self.frame.margin * 10, y)))
-				self.buttons.append(EditNeuron(curLayer, (x + self.frame.margin * 10, y), 1, None))
-				self.buttons.append(EditNeuron(curLayer, (x + self.frame.margin * 13, y), -1, None))
+				self.buttons.append(DeleteLayer(curLayer, (x0 - r - self.frame.margin, y)))
+				self.buttons.append(EditNeuron(curLayer, (x + r + self.frame.margin, y), 1, None))
+				self.buttons.append(EditNeuron(curLayer, (x + r + self.frame.margin * 3, y), -1, None))
 			if curLayer.type != nets.Layer.INPUT:
-				xm = x0 - self.frame.margin * 10
+				xm = x0 - r - self.frame.margin
 				ym = y + layerSpacing // 2
 				self.buttons.append(AddLayer(curLayer.upLayer, curLayer,(xm,ym)))
 
@@ -165,9 +165,11 @@ class DeleteLayer(object):
 		(self.x, self.y) = coord
 		self.r = 10
 		self.color = Colors.SILVER
+		self.font = pygame.font.SysFont("arial",10)
+		self.text = "-"
 
 	def draw(self, frame):
-		pygame.draw.circle(frame.screen, self.color, (self.x, self.y), self.r)
+		jp.util.drawTextCircle(frame.screen, self.x, self.y, self.r, self.font, self.text, self.color, Colors.BLACK)
 
 	def onClick(self):
 		nets.NetEditor.spliceOut(self.layer)
@@ -183,6 +185,8 @@ class AddLayer(DeleteLayer):
 		(self.x, self.y) = coord
 		self.r = 10
 		self.color = Colors.ORANGE
+		self.font = pygame.font.SysFont("arial",10)
+		self.text = "+"
 
 	def onClick(self):
 		layer = nets.Layer(Neurons.Sigmoid(), 3, nets.Layer.HIDDEN)
@@ -193,6 +197,8 @@ class EditNeuron(DeleteLayer):
 		super().__init__(layer, coord)
 		self.op = op
 		self.neuron = neuron
+		self.text = "-" if op == -1 else "+"
+
 
 	def onClick(self):
 		nets.NetEditor.editNode(self.layer, self.op, self.neuron)

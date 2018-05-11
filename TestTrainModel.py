@@ -20,8 +20,6 @@ class TestTrainModel(object):
 		curData = self.data.workingset
 		if curData is not None: self.getAlgo().train(curData)
 
-		print("finished training")
-
 
 	def crossWrapper(self):
 		foldsize = len(self.data.workingset) // 10
@@ -29,6 +27,8 @@ class TestTrainModel(object):
 
 	def crossValidate(self, foldSize, data):
 		#randomize examples and labels
+		if foldSize == 0:
+			return (-1, -1)
 		shuffle(data)
 		errSum = 0
 		k = len(data) // foldSize
@@ -39,7 +39,7 @@ class TestTrainModel(object):
 			matrix = self.predMatrix(training, test)
 			#print(matrix)
 			error = self.matrix2Error(matrix, foldSize)
-			print("partial err= %d"%(error))
+			#print("partial err= %d"%(error))
 			errSum += error
 			averageMatrix = np.add(averageMatrix, matrix)
 
@@ -49,10 +49,10 @@ class TestTrainModel(object):
 
 	#pred matrix from a signle pass on testData, trained on the training data
 	def predMatrix(self, trainingData, testData):
-		predMatrix = np.zeros((10,10))		
+		predMatrix = np.zeros((10,10))
+		self.getAlgo().train(trainingData)		
 		for point in testData:
 			(example, label) = point
-			self.getAlgo().train(trainingData)
 			ans = self.getAlgo().classify(example)
 			predMatrix[label][ans] += 1
 		return predMatrix

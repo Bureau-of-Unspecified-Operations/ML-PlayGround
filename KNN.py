@@ -52,8 +52,6 @@ class KNNModel(object):
 
 
 	def distance(self, p1, p2):
-		print(type(p1))
-		print(type(p2))
 		d = 0
 		diff = np.subtract(p1,p2)
 		square = np.square(diff)
@@ -62,16 +60,16 @@ class KNNModel(object):
 		
 
 	def classify(self, example):
+		if self.data is None:
+			return -1
+		if len(self.data) < 1:
+			return -1
 		self.lastClassified = example
 		self.clearHelpers()
 		nearest = [-1] * self.k
 		nearestIndexes = [-1] * self.k
 		for i in range(len(self.data)):
 			point = self.data[i][0]
-			print("ex")
-			print(example)
-			print("p")
-			print(point)
 			d = self.distance(example, point)
 			ind = self.closer(nearest,d)
 			if ind != -1:

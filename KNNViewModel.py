@@ -3,6 +3,7 @@ import jygame as jp
 import pygame
 import math
 from random import shuffle
+import Colors
 
 class KNNView(object):
 
@@ -31,13 +32,25 @@ class KNNView(object):
 		shapes = list()
 		shapes.extend(self.buttons)
 		shapes.extend(self.drawablesFromKNN())
+		color = None
+		text = ""
+		x = 10
+		y = 50
+		if self.model.data is None or len(self.model.data) < 1:
+			color = Colors.RED
+			text = "Not Trained"
+		else:
+			color = Colors.GREEN
+			text = "Trained!"
+		shapes.append(jp.DrawableTextRect(text, x, y, 5, color, Colors.BLACK, 20))
+		shapes.append(jp.BasicText("K-Nearest Neighbors", self.frame.width // 2 - 100, 10, 5, 30))
 		return shapes
 
 	def drawablesFromKNN(self):
 		shapes = list()
 		x, y = self.cx - self.mainCellSize // 2, self.cy - self.mainCellSize // 2
 
-		shapes.append(jp.BasicText("k = " + str(self.model.k), 70,10, 3))
+		shapes.append(jp.BasicText("k = " + str(self.model.k), 70,10, 3, 10))
 		
 		if(self.model.lastClassified is not None):
 			shapes.append(jp.DrawableGridFromArray(self.model.lastClassified, x, y, self.mainCellSize, 10))
@@ -46,13 +59,12 @@ class KNNView(object):
 		step = 2 * math.pi / self.model.k
 
 		for i, example in enumerate(self.model.lastHelpers):
-			print("max %d, min %d"%(self.maxr,self.minr))
 			r = jp.util.rescale(self.model.lastHelpers[i][1], 0, math.sqrt(100), self.minr, self.maxr)
 			theta = step * i
 			(rx, ry) = self.cx + int(r * math.cos(theta)) , self.cy - int(r * math.sin(theta))
 			x, y = rx - self.smallCellSize * 10 // 2, ry - self.smallCellSize * 10 // 2
 			shapes.append(jp.DrawableGridFromArray(example[0], x, y, self.smallCellSize, 10))
-			print("i %d, r %d, d %d, theta %f, x %d, y %d "%(i,r, self.model.lastHelpers[i][1], theta, x,y))
+			#print("i %d, r %d, d %d, theta %f, x %d, y %d "%(i,r, self.model.lastHelpers[i][1], theta, x,y))
 		return shapes
 
 
