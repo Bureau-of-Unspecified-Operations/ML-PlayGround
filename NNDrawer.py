@@ -44,7 +44,7 @@ class NNDrawer(object):
 		for i in range(len(points)):
 			(x1, y1) = point
 			(x2, y2) = points[i]
-			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), jp.util.rescale(weights[i],-.5,1,1,6), Colors.RED))
+			shapes.append(jp.DrawableLine((x1, y1 + r), (x2, y2 - r), jp.util.rescale(weights[i],-.5,1,1,4), Colors.RED))
 		return shapes
 
 

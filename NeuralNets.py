@@ -20,16 +20,13 @@ class Layer(object):
 		self.nCount = nCount
 
 	def compute(self):
-		print(type(self))
-		print(type(self.upLayer.cachedOutput))
-		print(type(self.weights))
 		dot = np.dot(self.upLayer.cachedOutput, self.weights)
 		self.cachedOutput = self.neuron.fire(dot)
 		return self.cachedOutput
 
 	# weight vectors are NxM, n is cnt in last (# of indexes), M is neurons in cur layer (# of wights)
 	def setWeights(self, n):
-		self.weights = np.full((n, self.nCount), 0.1)
+		self.weights = np.random.randn(n, self.nCount)
 
 
 class Net(object):
@@ -58,7 +55,7 @@ class Net(object):
 
 	def classify(self, vector):
 		pred = self.compute(vector)
-		print("did a classify")
+		# print("did a classify")
 		return np.argmax(pred)
 
 
@@ -79,7 +76,7 @@ class Net(object):
 			# print(sigmas)
 			err = np.multiply(weights, sigmas)
 			tmp = np.sum(err, axis=1)
-			# print("weights post")
+			# print("err resum")
 			# print(err)
 			return 	tmp		
 
@@ -95,6 +92,8 @@ class Net(object):
 			localDerivative = layer.neuron.derivative(layer.cachedOutput, label)
 			if layer.type == Layer.OUTPUT:
 				error = self.lossDerivative(layer.cachedOutput, label);
+				# print("lossder")
+				# print(error)
 			elif layer.type == Layer.HIDDEN:
 				error = downStreamError(layer.downLayer.cachedSigmas,layer.downLayer.weights)
 
@@ -118,7 +117,17 @@ class Net(object):
 			transCache = cache.reshape(cache.shape[0],-1) # squash into column vector
 			temp = np.multiply(layer.weights, transCache)  # mult each index (row) by relevant output
 			temp = np.multiply(temp, layer.cachedSigmas) # mult each weight (col) by relevant sigma
+			# print("uplayer out")
+			# print(transCache);
+			# print("cur sigmas")
+			# print(layer.cachedSigmas)
+			# print("weights")
+			# print(layer.weights)
+			# print("delta")
+			# print( temp * (-1) * step)
 			layer.weights = layer.weights + temp * (-1) * step 
+			# print("new weights")
+			# print(layer.weights)
 			layer = layer.upLayer
 
 
@@ -144,10 +153,10 @@ class Net(object):
 
 	def train(self, trainingData):
 		print("trained")
-		step = .01
+		step = .08
 		maxIter = 20
 		for t in range(maxIter):
-			for i in range(len(trainingData)):
+			for i in range(1):
 				example = trainingData[i][0]
 				#print(example)
 				label = self.adapter(trainingData[i][1])

@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from random import shuffle
 
 
 class KNNModel(object):
@@ -8,9 +9,8 @@ class KNNModel(object):
 		self.k = k
 		self.data = None
 		self.lastClassified = None
-		self.lastHelpExamples = list()
-		self.lastHelpDistances = list()
-		self.lastHelpLabels = list()
+		self.lastHelpers = list()
+		
 
 	def incK(self):
 		self.k += 1
@@ -20,9 +20,7 @@ class KNNModel(object):
 			self.k -= 1
 
 	def clearHelpers(self):
-		del self.lastHelpExamples[:]
-		del self.lastHelpDistances[:]
-		del self.lastHelpLabels[:]
+		del self.lastHelpers[:]
 
 	def vote(self, voters):
 		best = None
@@ -88,7 +86,6 @@ class KNNModel(object):
 			exampleN = self.data[nearestIndexes[i]][0]
 			labelN = self.data[nearestIndexes[i]][1]
 			distanceN = nearest[i]
-			self.lastHelpExamples.append(exampleN)
-			self.lastHelpLabels.append(labelN)
-			self.lastHelpDistances.append(distanceN)
+			self.lastHelpers.append((exampleN, distanceN, labelN))
+		shuffle(self.lastHelpers)
 		return ans

@@ -2,6 +2,7 @@ import KNN
 import jygame as jp
 import pygame
 import math
+from random import shuffle
 
 class KNNView(object):
 
@@ -35,20 +36,21 @@ class KNNView(object):
 	def drawablesFromKNN(self):
 		shapes = list()
 		x, y = self.cx - self.mainCellSize // 2, self.cy - self.mainCellSize // 2
+		
 		if(self.model.lastClassified is not None):
 			shapes.append(jp.DrawableGridFromArray(self.model.lastClassified, x, y, self.mainCellSize, 10))
 		else: shapes.append(jp.DrawableGridFromArray([0] * 100, x, y, self.mainCellSize, 10))
 
 		step = 2 * math.pi / self.model.k
 
-		for i, example in enumerate(self.model.lastHelpExamples):
+		for i, example in enumerate(self.model.lastHelpers):
 			print("max %d, min %d"%(self.maxr,self.minr))
-			r = jp.util.rescale(self.model.lastHelpDistances[i], 0, math.sqrt(100), self.minr, self.maxr)
+			r = jp.util.rescale(self.model.lastHelpers[i][1], 0, math.sqrt(100), self.minr, self.maxr)
 			theta = step * i
 			(rx, ry) = self.cx + int(r * math.cos(theta)) , self.cy - int(r * math.sin(theta))
 			x, y = rx - self.smallCellSize * 10 // 2, ry - self.smallCellSize * 10 // 2
-			shapes.append(jp.DrawableGridFromArray(example, x, y, self.smallCellSize, 10))
-			print("i %d, r %d, d %d, theta %f, x %d, y %d "%(i,r, self.model.lastHelpDistances[i], theta, x,y))
+			shapes.append(jp.DrawableGridFromArray(example[0], x, y, self.smallCellSize, 10))
+			print("i %d, r %d, d %d, theta %f, x %d, y %d "%(i,r, self.model.lastHelpers[i][1], theta, x,y))
 		return shapes
 
 
