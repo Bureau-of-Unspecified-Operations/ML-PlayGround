@@ -1,1 +1,9 @@
-WELCOM! This will get edited once I've made the thing.
+Hi There! something something copywrite, something something public liscense something something have fun.
+
+INSTRUCTIONS TO RUN
+- Clone repo to your machine
+- install the pygame and numpy packages via executing the following lines in terminal
+  -pip install pygame
+  -pip install numpy
+ -navigate to the into the repo and Run with:
+    -python Main.py
